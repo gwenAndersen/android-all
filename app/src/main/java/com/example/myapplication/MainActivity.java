@@ -12,7 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.src.main.java.com.nameless.web_server.Server;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,6 +79,24 @@ public class MainActivity extends AppCompatActivity {
     }
     public static Context getAppContext() {
         return MainActivity.context;
+    }
+
+    public static void copy1(File src, File dst) throws IOException {
+        try {
+            try (InputStream in = new FileInputStream(src)) {
+                Log.d("----", dst.toString());
+                try (OutputStream out = new FileOutputStream(dst)) {
+                    // Transfer bytes from in to out
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

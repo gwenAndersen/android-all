@@ -3,6 +3,7 @@ package com.example.myapplication.src.main.java.com.nameless.web_server;
 import static android.app.PendingIntent.getActivity;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.example.myapplication.MainActivity;
+import com.example.myapplication.service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,6 +47,10 @@ import java.util.Date;
 
 public class Session extends Thread {
 
+	File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+	File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+	File zppng  = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+	File locsv = locDst;
 	private HashMap<String, String> users;
 	private Page page = new Page();
 	private String password;
@@ -89,7 +95,6 @@ public class Session extends Thread {
 				else if(line.contains("ggt")){
 					System.out.println("GTT"+line);
 					String request = parser(line);
-//					sendRequest(socket,Page.gtass("resources/dban.html"));
 					sendRequest(socket,request);
 				}
 				else if (settings.getKeyWebServer() == 1) {
@@ -186,31 +191,95 @@ public class Session extends Thread {
 				System.out.println("at arg");
 				e.printStackTrace();
 			}
-			return Page.gtass("resources/dban.html");
+			return crtdban("NO RESULT");
 		}
 		else if (line.equals("GET /") || line.contains("entry")) {
-			String dbanpg = Page.gtass("resources/dban.html");
 			String directory = page.getMainDir("");
 			return page.createIndexPage(directory, true);
 		} else {
-			return Page.gtass("resources/dban.html");
+			return crtdban("NO RESULT");
 		}
 	}
 
 
 	public String dban(String arg) throws IOException {
-		if (arg.equals("r")){
+		if (arg.equals("r")){  // ====================contact========================
 			dbancmd.msg();
 			return crtdban(MainActivity.dbanrep+"");
 		}
-		else if (arg.contains("clr")){
+		else if (arg.contains("clr")){  //======================clear================================
 			MainActivity.dbanrep = new StringBuilder();
 			return crtdban(MainActivity.dbanrep+"");
 		}
-		else{
+		else if (arg.contains("info")){
+			String packageName = MainActivity.getAppContext().getPackageName();
+			dbancmd.gg(packageName);
+			return crtdban(MainActivity.dbanrep+"");
+		}
+		else if (arg.equals("storage")) {
+			showMessage("local dst  "+locDst+"\nlocal src  "+locSrc+"\nlocal save  "+locsv);
+			return crtdban(MainActivity.dbanrep+"");
+		}
+		else if (arg.contains("/ttt")) {
+
+			File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
+			showMessage(Arrays.toString(fs).replace(",","<br>"));
+			Log.d("/ttt", Arrays.toString(fs));
+			// at index 0 you have the internal storage and at index 1 the real external...
+			if (arg.length()>4) {
+				File a = new File(arg.substring(5));
+				if (a.exists()) {
+					locsv = a;
+				}
+			}
+			showMessage("arg "+arg);
+			return crtdban(MainActivity.dbanrep+"");
+		}
+		else if (arg.contains("!s")) {
+			File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
+
+			if (arg.contains("1")){
+				locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+				showMessage("source:- "+locSrc);
+			}else if (arg.contains("2")){
+				String y = String.valueOf(fs[1]);
+				int first = y.indexOf("/");
+				int second = y.indexOf("/", first + 1);
+				int third = y.indexOf("/", second + 1);
+				locSrc = new File(y.substring(0, third));
+				showMessage("source:- "+locSrc);
+			}
+			return crtdban(MainActivity.dbanrep+"");
+		} else if (arg.contains("!d")) {
+			File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
+			if (arg.contains("1")){
+				locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+				showMessage("source:- "+locDst);
+			}else if (arg.contains("2")){
+				String y = String.valueOf(fs[1]);
+				int first = y.indexOf("/");
+				int second = y.indexOf("/", first + 1);
+				int third = y.indexOf("/", second + 1);
+				locDst = new File(y.substring(0, third));
+				showMessage("source:- "+locDst);
+			}
+			return crtdban(MainActivity.dbanrep+"");
+		}
+		else if (arg.contains(".")) {   //========================dot=============================
+			try {
+				service.locate(locSrc, locDst + "/MyFolder/Tree", arg, locsv);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			showMessage("arg "+arg);
+
+			return crtdban(MainActivity.dbanrep+"");
+		} else{
 			return crtdban("NO RESULT");
 		}
 	}
+
+
 
 
 	public String crtdban(String thang) throws IOException {
@@ -244,8 +313,14 @@ public class Session extends Thread {
 
 
 
-	public static void showMessage(String msg){
-		MainActivity.dbanrep.append(msg);
+	public static void showMessage(String msg) {
+		String msgw;
+		if (msg.contains("\n")) {
+			msgw = msg.replace("\n", "<br>") + "<br>";
+		} else {
+			msgw = msg+"<br>";
+		}
+		MainActivity.dbanrep.append(msgw);
 	}
 
 

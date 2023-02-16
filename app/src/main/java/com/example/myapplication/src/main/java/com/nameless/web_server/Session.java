@@ -72,37 +72,37 @@ public class Session extends Thread {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 			String line = reader.readLine();
 			String clientIP = getClientIP(socket);
+			System.out.println(line);
 			if (line != null) {
-//				Log.d("TAG", "1");
+				Log.d("TAG", "1");
 				String token = createToken(clientIP, reader);
 				if (line.contains("control.html") || settings.getKeyWebServer() == 0) {
 					
-//					Log.d("TAG", "2");
+					Log.d("TAG", "2");
 					if (settings.getKeyWebFileServer() == 1) {
-//						Log.d("TAG", "3");
+						Log.d("TAG", "3");
 						Boolean isLogin = login(line, token);
 						if (isLogin) {
-//							Log.d("TAG", "4");
+							Log.d("TAG", "4");
 							line = line.split("\n")[0].replace(" HTTP/1.1", "");
 							String request = parser(line);
 							sendRequest(socket, request);
 						} else sendRequest(socket, Page.gtass("resources/control.html"));
-//						Log.d("TAG", "-4");
+						Log.d("TAG", "-4");
 					} else {sendRequest(socket, page.createErrorPage());
-//						Log.d("TAG", "-3");
+						Log.d("TAG", "-3");
 					}
 				}
 				else if(line.contains("ggt")){
-					System.out.println("GTT"+line);
 					String request = parser(line);
 					sendRequest(socket,request);
 				}
 				else if (settings.getKeyWebServer() == 1) {
-//					Log.d("TAG", "-2");
+					Log.d("TAG", "-2");
 					sendRequest(socket, Page.gtass("resources/control.html"));
 				}
 			}
-//			Log.d("TAG", "-1");
+			Log.d("TAG", "-1");
 
 		} catch (Exception e) {e.printStackTrace();}
 	}
@@ -183,7 +183,7 @@ public class Session extends Thread {
 			try{
 				if (line.contains("arg=[")) {
 					String iop = line.substring(line.indexOf("arg=[") + 5, line.indexOf("]=arg"));
-					System.out.println("ARG:  " + iop);
+					Log.d("ARG:  ", iop);
 					line.replace(iop, "");
 					return dban(iop);
 				}
@@ -265,17 +265,16 @@ public class Session extends Thread {
 			}
 			return crtdban(MainActivity.dbanrep+"");
 		}
-		else if (arg.contains(".")) {   //========================dot=============================
+		 else{   //========================dot=============================
+			Log.d("rrrr", arg);
 			try {
 				service.locate(locSrc, locDst + "/MyFolder/Tree", arg, locsv);
 			} catch (Exception e) {
-				e.printStackTrace();
+				showMessage("err was- "+e);
 			}
 			showMessage("arg "+arg);
 
 			return crtdban(MainActivity.dbanrep+"");
-		} else{
-			return crtdban("NO RESULT");
 		}
 	}
 
@@ -285,9 +284,8 @@ public class Session extends Thread {
 	public String crtdban(String thang) throws IOException {
 		String dbanpg = Page.gtass("resources/dban.html");
 		if (dbanpg.contains("&result&")){
-			System.out.println("yes");
 		}
-		String qq = dbanpg.replace("&result&", "<br><td>" + thang + "</td>");
+		String qq = dbanpg.replace("&result&", "<br><td>" + thang + "</td>"+ "<br>"+service.replyyy);
 		return qq;
 	}
 
@@ -379,6 +377,7 @@ public class Session extends Thread {
 				ps.print("Content-Disposition: form-data; name=\"myFile\"; filename=\"" + data[1] + "\"\r\n");
 				ps.printf("Content-Type: text/plain; charset=utf-8\r\n\r\n");
 				outputStream.write(fileInArray);
+				fileInArray = getBytes("");
 			} else {
 				httpResponse+="\r\n" + req;
 				socket.getOutputStream().write(httpResponse.getBytes("UTF-8"));

@@ -29,7 +29,7 @@ public class Settings {
 	private String SERVER_PASSWORD = "123";
 //	private String ROOT_FOLDER = Page.gtass("resources");
 	private String ROOT_FILE = Page.gtass("resources/index.html");
-	private String WEB_FILE_SERVER = "0";
+	private String WEB_FILE_SERVER = "1";
 	private String WEB_SERVER = "1";
 
 	public Settings() throws IOException {

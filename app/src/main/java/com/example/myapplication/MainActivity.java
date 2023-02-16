@@ -18,12 +18,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
 //    public static String rawdir = "/storage/emulated/0/";
     private static Context context;
     public static StringBuilder dbanrep = new StringBuilder();
+    public static ArrayList<ArrayList<String>> mraa;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(new Runnable() {
             public void run() {
-                Uri uri = Uri.parse("http://localhost:9999/ggt"); // missing 'http://' will cause crashed
+                Uri uri = Uri.parse("http://localhost:9999/control.html?entry=NAMELESS_WEB_SERVER/123/");
+                //http://localhost:9999/ggt
+                // missing 'http://' will cause crashed
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }

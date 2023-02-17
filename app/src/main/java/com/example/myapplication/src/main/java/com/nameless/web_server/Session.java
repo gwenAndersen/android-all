@@ -16,11 +16,17 @@ import android.util.Log;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.service;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -364,6 +370,24 @@ public class Session extends Thread {
 		return fileInArray;
 	}
 
+//	private byte[] getBytes(String path) throws IOException {
+//		File file = new File(path);
+//		FileInputStream fis = new FileInputStream(file);
+//		BufferedInputStream bis = new BufferedInputStream(fis);
+//
+//		DataInputStream dis = new DataInputStream(bis);
+//		Socket socket;  //your socket
+//
+//
+//		byte[] mybytearray = new byte[4096];
+//		int read = dis.read(mybytearray);
+//		while (read != -1) {
+//			System.out.println("ba "+mybytearray+ 0+"read "+ read);
+//			read = dis.read(mybytearray);
+//		}
+//
+//	}
+
 	private void sendRequest(Socket socket, String req) {
 		try {
 			String httpResponse = "HTTP/1.1 200 OK\r\n";
@@ -372,17 +396,57 @@ public class Session extends Thread {
 			if (req.contains("keyword=download")) {
 				String data[] = req.split("pp&jk");
 				Log.d("data", "sendRequest: "+req);
-				byte[] fileInArray = getBytes(data[0]);
+//				byte[] fileInArray = getBytes(data[0]);
 				ps.printf(httpResponse);
 				ps.print("Content-Disposition: form-data; name=\"myFile\"; filename=\"" + data[1] + "\"\r\n");
 				ps.printf("Content-Type: text/plain; charset=utf-8\r\n\r\n");
-				outputStream.write(fileInArray);
-				fileInArray = getBytes("");
+				File file = new File(data[0]);
+				FileInputStream fis = new FileInputStream(file);
+				BufferedInputStream bis = new BufferedInputStream(fis);
+
+				DataInputStream dis = new DataInputStream(bis);
+
+				DataOutputStream dos = new DataOutputStream(outputStream);
+
+				dos.writeUTF(file.getName());
+				dos.writeLong(file.length());
+
+				byte[] mybytearray = new byte[4096];
+				int read = dis.read(mybytearray);
+				while (read != -1) {
+					dos.write(mybytearray, 0, read);
+					read = dis.read(mybytearray);
+				}
+				dos.flush();
+//				outputStream.write(fileInArray);
+//				fileInArray = getBytes("");
 			} else {
 				httpResponse+="\r\n" + req;
 				socket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
 			}
 		} catch (Exception e) {e.printStackTrace();}
 	}
+
+//	private void sendRequest(Socket socket, String req) {
+//		try {
+//			String httpResponse = "HTTP/1.1 200 OK\r\n";
+//			OutputStream outputStream = socket.getOutputStream();
+//			PrintStream ps = new PrintStream(outputStream);
+//			if (req.contains("keyword=download")) {
+//				String data[] = req.split("pp&jk");
+//				Log.d("data", "sendRequest: "+req);
+//				byte[] fileInArray = getBytes(data[0]);
+//				ps.printf(httpResponse);
+//				ps.print("Content-Disposition: form-data; name=\"myFile\"; filename=\"" + data[1] + "\"\r\n");
+//				ps.printf("Content-Type: text/plain; charset=utf-8\r\n\r\n");
+//
+//				outputStream.write(fileInArray);
+//				fileInArray = getBytes("");
+//			} else {
+//				httpResponse+="\r\n" + req;
+//				socket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
+//			}
+//		} catch (Exception e) {e.printStackTrace();}
+//	}
 
 }

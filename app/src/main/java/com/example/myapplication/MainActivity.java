@@ -12,12 +12,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.src.main.java.com.nameless.web_server.Server;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
 
+
         Button cnt = findViewById(R.id.button);
 
 
@@ -63,16 +68,27 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new Thread(new Runnable() {
                     public void run() {
-//
-//                        try {
-//                            new Server();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
+                        try {
+                            File file = new File("/storage/emulated/0/MyFolder/ps/zips/chunk1.zip");
+                            FileInputStream fis = new FileInputStream(file);
+                            BufferedInputStream bis = new BufferedInputStream(fis);
 
-                        Uri uri = Uri.parse("http://localhost:9999/ggt"); // missing 'http://' will cause crashed
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(intent);
+                            DataInputStream dis = new DataInputStream(bis);
+                            Socket socket;  //your socket
+
+
+                            byte[] mybytearray = new byte[4096];
+                            int read = dis.read(mybytearray);
+                            while (read != -1) {
+                                System.out.println("ba "+mybytearray+ 0+"read "+ read);
+                                read = dis.read(mybytearray);
+                            }
+
+                        } catch (FileNotFoundException e) {
+                            throw new RuntimeException(e);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
 
                     }
                 }).start();

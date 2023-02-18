@@ -55,73 +55,67 @@ public class service {
     static String statementw ="";
     public static void locate(File dir, String file, String statement,File saveloc) {
         Log.d("--statement--", statement + spr.size());
-//        while (spr.size()>0){
-//            spr.remove(spr.size());
-//            spr.get(spr.size());
-//        }
-//        for (int i = 0; i < spr.size(); i++) {
-//            spr.remove(i);
-//        }
         erer = new StringBuilder();
-            Log.d("record", "local dst  "+dir+"\nlocal src  "+file+"\nlocal save  "+saveloc+"statement  "+statement);
-            svlc = saveloc;
-            try {
-                String[][] oi;
-                if (statement.contains(".")) {
-                    statementw = statement;
-                    ttlsz = 0;
-                    oi = printDirectoryTree(dir);
-                    FileWriter myWriter = new FileWriter(file + ".txt");
-                    FileWriter trackf = new FileWriter(file + "tr.txt");
-                    myWriter.write("file - " + ffl + "  P- " + pfl + "   V- " + vfl + "  A- " + afl + "\n" + oi[0][0]);
-                    myWriter.close();
+        Log.d("record", "local dst  " + dir + "\nlocal src  " + file + "\nlocal save  " + saveloc + "\nstatement  " + statement);
+        showMessage("record: \n"+ "local dst  " + dir + "\nlocal src  " + file + "\nlocal save  " + saveloc + "\nstatement  " + statement);
+        svlc = saveloc;
+        try {
+            String[][] oi;
+            if (statement.contains(".")) {
+                statementw = statement;
+                ttlsz = 0;
+                oi = printDirectoryTree(dir);
+                FileWriter myWriter = new FileWriter(file + ".txt");
+                FileWriter trackf = new FileWriter(file + "tr.txt");
+                myWriter.write("file - " + ffl + "  P- " + pfl + "   V- " + vfl + "  A- " + afl + "\n" + oi[0][0]);
+                myWriter.close();
 
-                    String rew = kklf(oi[1]).toString();
-                    ArrayList<ArrayList<String>> raa = kkla(oi[1]);
-                    MainActivity.mraa = raa;
-                    raams = raa;
-                    trackf.write(spr + "\n\n=S==1\n" + rew);
-                    trackf.close();
-                    Log.d(TAG, "erer: 1"+spr.size());
-                    Log.d(TAG, "erer: 2"+spr.size()+spr);
-                    for (int i = 0; i < spr.size(); i++) {
-                        Log.d("iiii", spr.get(i) + "");
-                        erer.append(spr.get(i) + " ");
-                    }
-                    replyyy = spr+"\n"+erer + "   W" + erer.length();
-
+                String rew = kklf(oi[1]).toString();
+//                System.out.println(rew);
+                ArrayList<ArrayList<String>> raa = kkla(oi[1]);
+                MainActivity.mraa = raa;
+                raams = raa;
+                trackf.write(spr +"\n"+ rew);
+                trackf.close();
+                Log.d(TAG, "erer: 1" + spr.size());
+                Log.d(TAG, "erer: 2" + spr.size() + spr);
+                for (int i = 0; i < spr.size(); i++) {
+                    Log.d("iiii", spr.get(i) + "");
+                    erer.append(spr.get(i) + " ");
                 }
-                else if (statement.contains("%22")) {  // replace in web var to " >> %22
-                    Log.d(":", "no");
-                    zpchunk(MainActivity.mraa);
-                } else if (statement.contains("0-0")) {
-                    spr.clear();
-                    erer = new StringBuilder("");
-                    replyyy = String.valueOf(erer);
-                    Log.d("clear", replyyy + erer.length() + spr.size());
-                } else if (statement.equals(";")) {   //----------------------copying large files---------------------------
-                    for (int i = 0; i < largefile.size(); i++) {
-                        Log.d("large", (int) smb(new File(largefile.get(i))) + "  " + i);
-                        replyyy = "large" + (int) smb(new File(largefile.get(i))) + "  " + i + largefile.get(i).substring(largefile.get(i).lastIndexOf("/"));
-                        MainActivity.copy1(new File(largefile.get(i)), new File(saveloc + "/MyFolder/ps/zips/chunk/" + largefile.get(i).substring(largefile.get(i).lastIndexOf("/"))));
-                    }
-                } else if (statement.contains(":")) {   //----------------------send to zip---------------------------
-                    Log.d(":", "ye");
-                    zip(MainActivity.mraa.get(Integer.parseInt(statement.substring(statement.indexOf(":") + 1)) - 1), saveloc + "/MyFolder/ps/zips/chunk" + (statement.indexOf(":") + 1) + ".zip");
-                }
-                Log.d("raw array", MainActivity.mraa.size() + "");
-                oi = new String[][]{{""}, {""}};
-                ffl = 0;
-                pfl = 0;
-                afl = 0;
-                vfl = 0;
-                statementw = "";
+                replyyy = spr + "\n" + erer + "   W" + erer.length();
 
-            } catch (Exception e) {
+            } else if (statement.contains("%22")) {  // replace in web var to " >> %22
+                Log.d(":", "no");
+                zpchunk(MainActivity.mraa);
+            } else if (statement.contains("0-0")) {
+                spr.clear();
+                erer = new StringBuilder("");
+                replyyy = String.valueOf(erer);
+                Log.d("clear", replyyy + erer.length() + spr.size());
+            } else if (statement.equals(";")) {   //----------------------copying large files---------------------------
+                for (int i = 0; i < largefile.size(); i++) {
+                    Log.d("large", (int) smb(new File(largefile.get(i))) + "  " + i);
+                    replyyy = "large" + (int) smb(new File(largefile.get(i))) + "  " + i + largefile.get(i).substring(largefile.get(i).lastIndexOf("/"));
+                    MainActivity.copy1(new File(largefile.get(i)), new File(saveloc + "/MyFolder/ps/zips/chunk/" + largefile.get(i).substring(largefile.get(i).lastIndexOf("/"))));
+                }
+            } else if (statement.contains(":")) {   //----------------------send to zip---------------------------
+                Log.d(":", "ye");
+                zip(MainActivity.mraa.get(Integer.parseInt(statement.substring(statement.indexOf(":") + 1)) - 1), saveloc + "/MyFolder/ps/zips/chunk" + (statement.indexOf(":") + 1) + ".zip");
+            }
+            Log.d("raw array", MainActivity.mraa.size() + "");
+            oi = new String[][]{{""}, {""}};
+            ffl = 0;
+            pfl = 0;
+            afl = 0;
+            vfl = 0;
+            statementw = "";
+
+        } catch (Exception e) {
             Log.d("1service", e.toString());
             e.printStackTrace();
         }
-            spr.clear();
+        spr.clear();
 
     }
     public static StringBuilder kklf(String[] file) {
@@ -130,13 +124,17 @@ public class service {
         Log.d("fllist", rt.length+"");
         double oii = 0;
         StringBuilder cntnt = new StringBuilder();
+        ArrayList<String> chnks = new ArrayList<String>();
+        ArrayList<String> cnksz = new ArrayList<String>();
+        ArrayList<String> cntfl = new ArrayList<String>();
         for (String i : rt){
             File r =new File(i);
             if (r.exists()){
                 cntnt.append(r).append("\n");
                 oii = oii+ smb(r);
                 if (oii>500){
-                    cntnt.append("=="+(spr.size()+2)+"  size- "+oii + "\n");
+                    chnks.add(String.valueOf(cntnt));
+                    cnksz.add("=="+(spr.size()+1)+"  size- "+oii + "\n");
                     spr.add((int)oii);
                     oii = 0;
                 }
@@ -144,11 +142,21 @@ public class service {
                 Log.d("no", String.valueOf(r));
             }
         }
+        chnks.add(String.valueOf(cntnt));
+        cnksz.add("=="+(spr.size()+1)+"  size- "+oii + "\n");
+//        System.out.println("--=="+chnks.size()+cnksz);
+        for (int i = 0; i < chnks.size(); i++) {
+            cntfl.add(cnksz.get(i)+chnks.get(i));
+        }
         Log.d("==", oii+"");
         spr.add((int)oii);
         oii = 0;
         cntnt.append("=="+(spr.size()+2)+"  size- "+oii + "\n");
-        return cntnt;
+        String rre = String.join(", ", cntfl);
+        cnksz.clear();
+        cntfl.clear();
+        cntnt = new StringBuilder();
+        return new StringBuilder(rre);
     }
     public static ArrayList<ArrayList<String>> kkla(String[] file) throws IOException {
         ArrayList<ArrayList<String> > sprcnt = new ArrayList<ArrayList<String> >();

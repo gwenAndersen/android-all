@@ -54,7 +54,8 @@ import java.util.Date;
 public class Session extends Thread {
 
 	File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-	File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+//	File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+	File locDst = MainActivity.getAppContext().getExternalFilesDirs(null)[0];
 	File zppng  = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
 	File locsv = locDst;
 	private HashMap<String, String> users;
@@ -78,7 +79,7 @@ public class Session extends Thread {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 			String line = reader.readLine();
 			String clientIP = getClientIP(socket);
-			System.out.println(line);
+			System.out.println(line+"\n"+line.contains("control.html"));
 			if (line != null) {
 				Log.d("TAG", "1");
 				String token = createToken(clientIP, reader);
@@ -102,6 +103,9 @@ public class Session extends Thread {
 				else if(line.contains("ggt")){
 					String request = parser(line);
 					sendRequest(socket,request);
+				}
+				else if(line.contains("hm")){
+					sendRequest(socket, Page.gtass("resources/lnk.html"));
 				}
 				else if (settings.getKeyWebServer() == 1) {
 					Log.d("TAG", "-2");
@@ -199,6 +203,9 @@ public class Session extends Thread {
 			}
 			return crtdban("NO RESULT");
 		}
+		else if (line.contains("hm")){
+			return crtdban("NO RESULT");
+		}
 		else if (line.equals("GET /") || line.contains("entry")) {
 			String directory = page.getMainDir("");
 			return page.createIndexPage(directory, true);
@@ -208,7 +215,7 @@ public class Session extends Thread {
 	}
 
 
-	public String dban(String arg) throws IOException {
+	public String dban(String arg) throws IOException, InterruptedException {
 		if (arg.equals("r")){  // ====================contact========================
 			dbancmd.msg();
 			return crtdban(MainActivity.dbanrep+"");
@@ -256,7 +263,8 @@ public class Session extends Thread {
 				showMessage("source:- "+locSrc);
 			}
 			return crtdban(MainActivity.dbanrep+"");
-		} else if (arg.contains("!d")) {
+		}
+		else if (arg.contains("!d")) {
 			File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
 			if (arg.contains("1")){
 				locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
@@ -271,7 +279,66 @@ public class Session extends Thread {
 			}
 			return crtdban(MainActivity.dbanrep+"");
 		}
-		 else{   //========================dot=============================
+
+
+
+
+
+
+
+		else if (arg.equals("q")){ //ABORT
+			try{
+				File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
+				if (fs.length>1){
+					for (File i : fs){
+
+						String y = String.valueOf(i);
+						int second = y.lastIndexOf("Android" );
+						File lot = new File(y + "/MyFolder/dd/");
+						File loc = new File(y.substring(0, second) + "MyFolder/dd/");
+						System.out.println("source:- "+lot.exists()+"  "+lot);
+						System.out.println("source OUT:- "+loc.exists()+"  "+loc);
+						if (loc.exists()){
+							deleteRecursive(loc);
+							System.out.println("------ "+loc+"  was deleted");
+						}
+						if (lot.exists()){
+							deleteRecursive(lot);
+							System.out.println("------ "+lot+"  was deleted");
+						}
+					}
+				}else {
+					System.out.println("fsNotFound- "+fs.length+Arrays.toString(fs));
+				}
+			}catch (Exception e){
+				showMessage("err - "+e);
+			}
+			return crtdban(MainActivity.dbanrep+"");
+		}
+		else if (arg.equals("z")){
+			File r = new File("/storage/emulated/0/Download/wwwwwwwww/");
+			File[] ro = r.listFiles();
+			for (File i : ro){
+				if (i.exists()){
+					Log.d("mltfl", "+");
+				}else{
+					Log.d("mltfl", "-");
+				}
+				multifl(i);
+			}
+//			multifl(r);
+			return crtdban(MainActivity.dbanrep+"");
+		}
+
+
+
+
+
+
+
+
+
+		else{   //========================dot=============================
 			Log.d("rrrr", arg);
 			try {
 				service.locate(locSrc, locDst + "/MyFolder/Tree", arg, locsv);
@@ -285,7 +352,13 @@ public class Session extends Thread {
 	}
 
 
-
+	void deleteRecursive(File fileOrDirectory) {
+		if (fileOrDirectory.isDirectory())
+			for (File child : fileOrDirectory.listFiles())
+				deleteRecursive(child);
+		Log.d("R_Del", fileOrDirectory+"");
+		fileOrDirectory.delete();
+	}
 
 	public String crtdban(String thang) throws IOException {
 		String dbanpg = Page.gtass("resources/dban.html");
@@ -293,26 +366,6 @@ public class Session extends Thread {
 		}
 		String qq = dbanpg.replace("&result&", "<br><td>" + thang + "</td>"+ "<br>"+service.replyyy);
 		return qq;
-	}
-
-
-	public  void wrtfl(String ffolder,String fname,String content,boolean append) {
-		String rootPath = null;
-		File f = null;
-		try {
-			rootPath = Environment.getExternalStorageDirectory()
-					.getAbsolutePath() + "/" + ffolder + "/";
-			File root = new File(rootPath);
-			if (!root.exists()) {
-				root.mkdirs();
-			}
-			f = new File(rootPath + fname);
-			FileOutputStream out = new FileOutputStream(f,append);
-			out.write(content.getBytes());
-			out.flush();
-			out.close();
-		} catch (Exception e) {
-		}
 	}
 
 
@@ -408,8 +461,8 @@ public class Session extends Thread {
 
 				DataOutputStream dos = new DataOutputStream(outputStream);
 
-				dos.writeUTF(file.getName());
-				dos.writeLong(file.length());
+//				dos.writeUTF(file.getName());
+//				dos.writeLong(file.length());
 
 				byte[] mybytearray = new byte[4096];
 				int read = dis.read(mybytearray);
@@ -427,26 +480,39 @@ public class Session extends Thread {
 		} catch (Exception e) {e.printStackTrace();}
 	}
 
-//	private void sendRequest(Socket socket, String req) {
-//		try {
-//			String httpResponse = "HTTP/1.1 200 OK\r\n";
+	public void multifl(File ffile){
+		try {
+			String httpResponse = "HTTP/1.1 200 OK\r\n";
+			OutputStream outputStream = socket.getOutputStream();
 //			OutputStream outputStream = socket.getOutputStream();
-//			PrintStream ps = new PrintStream(outputStream);
-//			if (req.contains("keyword=download")) {
-//				String data[] = req.split("pp&jk");
-//				Log.d("data", "sendRequest: "+req);
+			PrintStream ps = new PrintStream(outputStream);
+			Log.d("data", "sendRequest: "+ffile);
 //				byte[] fileInArray = getBytes(data[0]);
-//				ps.printf(httpResponse);
-//				ps.print("Content-Disposition: form-data; name=\"myFile\"; filename=\"" + data[1] + "\"\r\n");
-//				ps.printf("Content-Type: text/plain; charset=utf-8\r\n\r\n");
-//
+			ps.printf(httpResponse);
+			ps.print("Content-Disposition: form-data; name=\"myFile\"; filename=\"" + ffile.toString().substring(ffile.toString().lastIndexOf("/")) + "\"\r\n");
+			ps.printf("Content-Type: text/plain; charset=utf-8\r\n\r\n");
+			File file = new File(String.valueOf(ffile));
+			FileInputStream fis = new FileInputStream(file);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+
+			DataInputStream dis = new DataInputStream(bis);
+
+			DataOutputStream dos = new DataOutputStream(outputStream);
+
+//				dos.writeUTF(file.getName());
+//				dos.writeLong(file.length());
+
+			byte[] mybytearray = new byte[4096];
+			int read = dis.read(mybytearray);
+			while (read != -1) {
+				dos.write(mybytearray, 0, read);
+				read = dis.read(mybytearray);
+			}
+			dos.flush();
+			outputStream.flush();
 //				outputStream.write(fileInArray);
 //				fileInArray = getBytes("");
-//			} else {
-//				httpResponse+="\r\n" + req;
-//				socket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
-//			}
-//		} catch (Exception e) {e.printStackTrace();}
-//	}
+		} catch (Exception e) {e.printStackTrace();}
+	}
 
 }

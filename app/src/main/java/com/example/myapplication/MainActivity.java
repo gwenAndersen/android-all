@@ -1,16 +1,22 @@
 package com.example.myapplication;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.example.myapplication.src.main.java.com.nameless.web_server.Server;
+import com.example.myapplication.src.main.java.com.nameless.web_server.Session;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -35,6 +41,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Client");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+            }
+        }
         MainActivity.context = getApplicationContext();
         new Thread(new Runnable() {
             public void run() {
@@ -49,14 +65,39 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(new Runnable() {
             public void run() {
-                Uri uri = Uri.parse("http://localhost:9999/control.html?entry=NAMELESS_WEB_SERVER/123/");
-                //http://localhost:9999/ggt
+                String aa = "/ggt";
+                String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
+                Uri uri = Uri.parse("http://localhost:9999"+bb);
                 // missing 'http://' will cause crashed
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
         }).start();
 
+
+
+        new Thread(new Runnable() {
+            public void run() {
+                String aa = "/ggt";
+                String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
+                Uri uri = Uri.parse("http://localhost:9999"+"/control.html?entry=NAMELESS_WEB_SERVER/123/?dir=Android?dir=data?dir=com.example.myapplication?dir=files");
+                // missing 'http://' will cause crashed
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        }).start();
+
+        File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
+        System.out.println(fs[0]);
+
+        ArrayList<File> theDir = new ArrayList<>();
+        theDir.add(new File(fs[0] + "/MyFolder/clt"));
+        theDir.add(new File(fs[0] + "/MyFolder/ps/zips"));
+        for (File i : theDir) {
+            if (!i.exists()) {
+                i.mkdirs();
+            }
+        }
 
 
         Button cnt = findViewById(R.id.button);
@@ -68,27 +109,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new Thread(new Runnable() {
                     public void run() {
-                        try {
-                            File file = new File("/storage/emulated/0/MyFolder/ps/zips/chunk1.zip");
-                            FileInputStream fis = new FileInputStream(file);
-                            BufferedInputStream bis = new BufferedInputStream(fis);
 
-                            DataInputStream dis = new DataInputStream(bis);
-                            Socket socket;  //your socket
-
-
-                            byte[] mybytearray = new byte[4096];
-                            int read = dis.read(mybytearray);
-                            while (read != -1) {
-                                System.out.println("ba "+mybytearray+ 0+"read "+ read);
-                                read = dis.read(mybytearray);
-                            }
-
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+                        File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+                        File zppng  = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+                        File locsv = locDst;
+                        service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
 
                     }
                 }).start();

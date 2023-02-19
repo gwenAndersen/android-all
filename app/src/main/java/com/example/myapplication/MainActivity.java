@@ -8,9 +8,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -32,15 +34,22 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-//    public static String rawdir = "/storage/emulated/0/";
+    //    public static String rawdir = "/storage/emulated/0/";
     private static Context context;
     public static StringBuilder dbanrep = new StringBuilder();
     public static ArrayList<ArrayList<String>> mraa;
+
+    public static String logg = "";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Client");
+        Button cnt = findViewById(R.id.button);
+        Button ref = findViewById(R.id.button2);
+        TextView llga = findViewById(R.id.image_view);
+        llga.setMovementMethod(new ScrollingMovementMethod());
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
@@ -58,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     new Server();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    MainActivity.yyyw(e+"");
                 }
             }
         }).start();
@@ -67,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 String aa = "/ggt";
                 String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
-                Uri uri = Uri.parse("http://localhost:9999"+bb);
+                Uri uri = Uri.parse("http://localhost:9999" + aa);
                 // missing 'http://' will cause crashed
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
@@ -75,17 +85,16 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
 
-
-        new Thread(new Runnable() {
-            public void run() {
-                String aa = "/ggt";
-                String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
-                Uri uri = Uri.parse("http://localhost:9999"+"/control.html?entry=NAMELESS_WEB_SERVER/123/?dir=Android?dir=data?dir=com.example.myapplication?dir=files");
-                // missing 'http://' will cause crashed
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            public void run() {
+//                String aa = "/ggt";
+//                String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
+//                Uri uri = Uri.parse("http://localhost:9999"+"/control.html?entry=NAMELESS_WEB_SERVER/123/?dir=Android?dir=data?dir=com.example.myapplication?dir=files");
+//                // missing 'http://' will cause crashed
+//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                startActivity(intent);
+//            }
+//        }).start();
 
         File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
         System.out.println(fs[0]);
@@ -98,9 +107,20 @@ public class MainActivity extends AppCompatActivity {
                 i.mkdirs();
             }
         }
+        File[] fd = MainActivity.getAppContext().getExternalFilesDirs(null);
+        if (fd.length > 1) {
+            File dird = fd[1];
+            ArrayList<File> theDird = new ArrayList<>();
+            theDird.add(new File(dird + "/MyFolder/clt"));
+            theDird.add(new File(dird + "/MyFolder/ps/zips"));
+            for (File i : theDird) {
+                if (!i.exists()) {
+                    i.mkdirs();
+                }
+            }
+        }
 
 
-        Button cnt = findViewById(R.id.button);
 
 
 
@@ -112,9 +132,21 @@ public class MainActivity extends AppCompatActivity {
 
                         File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
                         File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-                        File zppng  = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+                        File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
                         File locsv = locDst;
                         service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
+
+                    }
+                }).start();
+            }
+        });
+
+        ref.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        llga.setText(logg);
 
                     }
                 }).start();
@@ -142,7 +174,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }catch (Exception e){
             e.printStackTrace();
+            MainActivity.yyyw(e.toString());
         }
+    }
+    public static void yyyw(String a){
+        logg = a + "\n" + logg;
+//        logg.append(a+"\n");
+        System.out.println(a);
+    }
+    public static void yyyw(String a,String b){
+        logg = a+","+b+"\n" + logg;
+//        logg.append(a+","+b+"\n");
+        Log.d(a , b);
     }
 
 

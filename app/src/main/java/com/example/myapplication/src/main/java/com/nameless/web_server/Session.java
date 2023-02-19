@@ -79,42 +79,40 @@ public class Session extends Thread {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 			String line = reader.readLine();
 			String clientIP = getClientIP(socket);
-			System.out.println(line+"\n"+line.contains("control.html"));
+			MainActivity.yyyw(line+"\n"+line.contains("control.html"));
 			if (line != null) {
-				Log.d("TAG", "1");
+				MainActivity.yyyw("TAG", "1");
 				String token = createToken(clientIP, reader);
 				if (line.contains("control.html") || settings.getKeyWebServer() == 0) {
 					
-					Log.d("TAG", "2");
+					MainActivity.yyyw("TAG", "2");
 					if (settings.getKeyWebFileServer() == 1) {
-						Log.d("TAG", "3");
+						MainActivity.yyyw("TAG", "3");
 						Boolean isLogin = login(line, token);
 						if (isLogin) {
-							Log.d("TAG", "4");
+							MainActivity.yyyw("TAG", "4");
 							line = line.split("\n")[0].replace(" HTTP/1.1", "");
 							String request = parser(line);
 							sendRequest(socket, request);
 						} else sendRequest(socket, Page.gtass("resources/control.html"));
-						Log.d("TAG", "-4");
+						MainActivity.yyyw("TAG", "-4");
 					} else {sendRequest(socket, page.createErrorPage());
-						Log.d("TAG", "-3");
+						MainActivity.yyyw("TAG", "-3");
 					}
 				}
 				else if(line.contains("ggt")){
 					String request = parser(line);
 					sendRequest(socket,request);
 				}
-				else if(line.contains("hm")){
-					sendRequest(socket, Page.gtass("resources/lnk.html"));
-				}
 				else if (settings.getKeyWebServer() == 1) {
-					Log.d("TAG", "-2");
+					MainActivity.yyyw("TAG", "-2");
 					sendRequest(socket, Page.gtass("resources/control.html"));
 				}
 			}
-			Log.d("TAG", "-1");
+			MainActivity.yyyw("TAG", "-1");
 
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {e.printStackTrace();
+			MainActivity.yyyw(e+"");}
 	}
 
 	private String createToken(String clientIP, BufferedReader reader) {
@@ -137,7 +135,8 @@ public class Session extends Thread {
 				}
 				return token;
 			}
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {e.printStackTrace();
+			MainActivity.yyyw(e+"");}
 		return "";
 	}
 
@@ -166,11 +165,14 @@ public class Session extends Thread {
 
 	private String parser(String line) throws IOException {
 		String directoryLink = "";
-		if (line.contains("dir=") && !line.contains("download=")) {
+		if (line.contains("dir=") && line.contains("sd-[") && !line.contains("download=")) {
+			MainActivity.yyyw("loca", "1");
 			String directoryName = splitRequest(line, "dir=");
+			MainActivity.yyyw("sd dir"+directoryName);
 			try {
-				directoryLink = page.getMainDir(directoryName);
+				directoryLink = page.getMainDir(directoryName,true);
 			} catch (Exception e) {
+				MainActivity.yyyw(e+"");
 				return page.createErrorPage();
 			}
 			if (!page.getFormatFile(directoryName).isEmpty()) {
@@ -178,7 +180,36 @@ public class Session extends Thread {
 			}
 			String index = page.createIndexPage(directoryLink, false);
 			return index;
-		} else if (line.contains("download=")) {
+		}
+		else if (line.contains("dir=") && !line.contains("download=")) {
+			MainActivity.yyyw("loca", "2");
+			String directoryName = splitRequest(line, "dir=");
+			try {
+				directoryLink = page.getMainDir(directoryName);
+			} catch (Exception e) {
+				MainActivity.yyyw(e+"");
+				return page.createErrorPage();
+			}
+			if (!page.getFormatFile(directoryName).isEmpty()) {
+				return page.openFile(page.getFormatFile(directoryName), directoryLink);
+			}
+			String index = page.createIndexPage(directoryLink, false);
+			return index;
+		}
+		else if (line.contains("download=" )&& line.contains("sd-[")) {
+			MainActivity.yyyw("loca", "3");
+			String filePath = splitRequest(line, "dir=").replace("download=", "")
+					.replace("//", "");
+			String path = page.getMainDir("",true) + "/" + filePath;
+			page.clearDirectoryList();
+			if (filePath.contains("/")) {
+				String[] data = filePath.split("/");
+				return path + "pp&jk" + data[data.length-1] + "pp&jk" + new File(path).length() + "&keyword=download";
+			}
+			return path + "pp&jk" + filePath + "pp&jk" + new File(path).length() + "&keyword=download";
+		}
+		else if (line.contains("download=")) {
+			MainActivity.yyyw("loca", "4");
 			String filePath = splitRequest(line, "dir=").replace("download=", "")
 					.replace("//", "");
 			String path = page.getMainDir("") + "/" + filePath;
@@ -190,23 +221,28 @@ public class Session extends Thread {
 			return path + "pp&jk" + filePath + "pp&jk" + new File(path).length() + "&keyword=download";
 		}
 		else if (line.contains("ggt")){
+			MainActivity.yyyw("loca", "5");
 			try{
 				if (line.contains("arg=[")) {
 					String iop = line.substring(line.indexOf("arg=[") + 5, line.indexOf("]=arg"));
-					Log.d("ARG:  ", iop);
+					MainActivity.yyyw("ARG:  ", iop);
 					line.replace(iop, "");
 					return dban(iop);
 				}
 			}catch (Exception e){
-				System.out.println("at arg");
+				MainActivity.yyyw(e+"");
+				MainActivity.yyyw("at arg");
 				e.printStackTrace();
 			}
 			return crtdban("NO RESULT");
 		}
-		else if (line.contains("hm")){
-			return crtdban("NO RESULT");
+		else if (line.contains("sd-[")){
+			MainActivity.yyyw("loca", "6");
+			String directory = page.getMainDir("",true);
+			return page.createIndexPage(directory, true);
 		}
 		else if (line.equals("GET /") || line.contains("entry")) {
+			MainActivity.yyyw("loca", "7");
 			String directory = page.getMainDir("");
 			return page.createIndexPage(directory, true);
 		} else {
@@ -230,6 +266,28 @@ public class Session extends Thread {
 			return crtdban(MainActivity.dbanrep+"");
 		}
 		else if (arg.equals("storage")) {
+			File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
+			ArrayList<File> diskPartition = new ArrayList<>();
+			if (fs.length > 1) {
+				String y = String.valueOf(fs[1]);
+				int first = y.indexOf("/");
+				int second = y.indexOf("/", first + 1);
+				int third = y.indexOf("/", second + 1);
+				diskPartition.add(new File(y.substring(0, third)));
+			}
+			String y = String.valueOf(fs[0]);
+			int first = y.indexOf("/");
+			int second = y.indexOf("/", first + 1);
+			int third = y.indexOf("/", second + 1);
+			diskPartition.add(new File(y.substring(0, third)));
+
+			for (int i = 0; i < diskPartition.size(); i++) {
+				long totalCapacity = diskPartition.get(i).getTotalSpace();
+				long freePartitionSpace = diskPartition.get(i).getFreeSpace();
+				showMessage("element "+i+"\nS:- "+totalCapacity/ (1024*1024*1024) + " GB  "+"F:- "+freePartitionSpace/ (1024*1024*1024) + " GB   ");
+			}
+
+
 			showMessage("local dst  "+locDst+"\nlocal src  "+locSrc+"\nlocal save  "+locsv);
 			return crtdban(MainActivity.dbanrep+"");
 		}
@@ -237,7 +295,7 @@ public class Session extends Thread {
 
 			File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
 			showMessage(Arrays.toString(fs).replace(",","<br>"));
-			Log.d("/ttt", Arrays.toString(fs));
+			MainActivity.yyyw("/ttt", Arrays.toString(fs));
 			// at index 0 you have the internal storage and at index 1 the real external...
 			if (arg.length()>4) {
 				File a = new File(arg.substring(5));
@@ -296,53 +354,33 @@ public class Session extends Thread {
 						int second = y.lastIndexOf("Android" );
 						File lot = new File(y + "/MyFolder/dd/");
 						File loc = new File(y.substring(0, second) + "MyFolder/dd/");
-						System.out.println("source:- "+lot.exists()+"  "+lot);
-						System.out.println("source OUT:- "+loc.exists()+"  "+loc);
+						MainActivity.yyyw("source:- "+lot.exists()+"  "+lot);
+						MainActivity.yyyw("source OUT:- "+loc.exists()+"  "+loc);
 						if (loc.exists()){
 							deleteRecursive(loc);
-							System.out.println("------ "+loc+"  was deleted");
+							MainActivity.yyyw("------ "+loc+"  was deleted");
 						}
 						if (lot.exists()){
 							deleteRecursive(lot);
-							System.out.println("------ "+lot+"  was deleted");
+							MainActivity.yyyw("------ "+lot+"  was deleted");
 						}
 					}
 				}else {
-					System.out.println("fsNotFound- "+fs.length+Arrays.toString(fs));
+					MainActivity.yyyw("fsNotFound- "+fs.length+Arrays.toString(fs));
 				}
 			}catch (Exception e){
+				MainActivity.yyyw(e+"");
 				showMessage("err - "+e);
 			}
 			return crtdban(MainActivity.dbanrep+"");
 		}
-		else if (arg.equals("z")){
-			File r = new File("/storage/emulated/0/Download/wwwwwwwww/");
-			File[] ro = r.listFiles();
-			for (File i : ro){
-				if (i.exists()){
-					Log.d("mltfl", "+");
-				}else{
-					Log.d("mltfl", "-");
-				}
-				multifl(i);
-			}
-//			multifl(r);
-			return crtdban(MainActivity.dbanrep+"");
-		}
-
-
-
-
-
-
-
-
 
 		else{   //========================dot=============================
-			Log.d("rrrr", arg);
+			MainActivity.yyyw("rrrr", arg);
 			try {
 				service.locate(locSrc, locDst + "/MyFolder/Tree", arg, locsv);
 			} catch (Exception e) {
+				MainActivity.yyyw(e+"");
 				showMessage("err was- "+e);
 			}
 			showMessage("arg "+arg);
@@ -356,7 +394,7 @@ public class Session extends Thread {
 		if (fileOrDirectory.isDirectory())
 			for (File child : fileOrDirectory.listFiles())
 				deleteRecursive(child);
-		Log.d("R_Del", fileOrDirectory+"");
+		MainActivity.yyyw("R_Del", fileOrDirectory+"");
 		fileOrDirectory.delete();
 	}
 
@@ -401,25 +439,31 @@ public class Session extends Thread {
 
 	private String splitRequest(String line, String type) {
 		String[] request = line.split("\\?");
+		MainActivity.yyyw("split"+ Arrays.toString(request));
 		String directoryName = "";
 		for (String str : request) {
-			directoryName += "/" + str.replace(type, "").replace("GET /", "")
-					.replace("%20", " ");
+				directoryName += "/" + str.replace(type, "").replace("GET /", "")
+						.replace("%20", " ");
+
 		}
 		String[] data = {};
-		if (directoryName.contains(password + "//")) data = directoryName.split("//");
+		if (directoryName.contains(password + "//")) {
+			data = directoryName.split("//");
+			MainActivity.yyyw("contain pass"+directoryName);
+		}
 		else if (data.length == 0) return directoryName;
 		return data[data.length-1];
 	}
 
 	private byte[] getBytes(String path) {
-		Log.d("input", new File(path).exists()+"\""+path+"\"");
+		MainActivity.yyyw("input", new File(path).exists()+"\""+path+"\"");
 		byte[] fileInArray = new byte[(int)new File(path).length()];
 		try {
 			FileInputStream f = new FileInputStream(path);
 			f.read(fileInArray);
 			return fileInArray;
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {
+			MainActivity.yyyw(e+"");e.printStackTrace();}
 		return fileInArray;
 	}
 
@@ -435,7 +479,7 @@ public class Session extends Thread {
 //		byte[] mybytearray = new byte[4096];
 //		int read = dis.read(mybytearray);
 //		while (read != -1) {
-//			System.out.println("ba "+mybytearray+ 0+"read "+ read);
+//			MainActivity.yyyw("ba "+mybytearray+ 0+"read "+ read);
 //			read = dis.read(mybytearray);
 //		}
 //
@@ -448,7 +492,7 @@ public class Session extends Thread {
 			PrintStream ps = new PrintStream(outputStream);
 			if (req.contains("keyword=download")) {
 				String data[] = req.split("pp&jk");
-				Log.d("data", "sendRequest: "+req);
+				MainActivity.yyyw("data", "sendRequest: "+req);
 //				byte[] fileInArray = getBytes(data[0]);
 				ps.printf(httpResponse);
 				ps.print("Content-Disposition: form-data; name=\"myFile\"; filename=\"" + data[1] + "\"\r\n");
@@ -477,7 +521,8 @@ public class Session extends Thread {
 				httpResponse+="\r\n" + req;
 				socket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
 			}
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {
+			MainActivity.yyyw(e+"");e.printStackTrace();}
 	}
 
 	public void multifl(File ffile){
@@ -486,7 +531,7 @@ public class Session extends Thread {
 			OutputStream outputStream = socket.getOutputStream();
 //			OutputStream outputStream = socket.getOutputStream();
 			PrintStream ps = new PrintStream(outputStream);
-			Log.d("data", "sendRequest: "+ffile);
+			MainActivity.yyyw("data", "sendRequest: "+ffile);
 //				byte[] fileInArray = getBytes(data[0]);
 			ps.printf(httpResponse);
 			ps.print("Content-Disposition: form-data; name=\"myFile\"; filename=\"" + ffile.toString().substring(ffile.toString().lastIndexOf("/")) + "\"\r\n");
@@ -512,7 +557,10 @@ public class Session extends Thread {
 			outputStream.flush();
 //				outputStream.write(fileInArray);
 //				fileInArray = getBytes("");
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {
+			MainActivity.yyyw(e+"");
+			e.printStackTrace();
+		}
 	}
 
 }

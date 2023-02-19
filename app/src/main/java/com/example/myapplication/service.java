@@ -54,9 +54,9 @@ public class service {
     static List<String> track = new ArrayList<>();
     static String statementw ="";
     public static void locate(File dir, String file, String statement,File saveloc) {
-        Log.d("--statement--", statement + spr.size());
+        MainActivity.yyyw("--statement--", statement + spr.size());
         erer = new StringBuilder();
-        Log.d("record", "local dst  " + dir + "\nlocal src  " + file + "\nlocal save  " + saveloc + "\nstatement  " + statement);
+        MainActivity.yyyw("record", "local dst  " + dir + "\nlocal src  " + file + "\nlocal save  " + saveloc + "\nstatement  " + statement);
         showMessage("record: \n"+ "local dst  " + dir + "\nlocal src  " + file + "\nlocal save  " + saveloc + "\nstatement  " + statement);
         svlc = saveloc;
         try {
@@ -71,39 +71,39 @@ public class service {
                 myWriter.close();
 
                 String rew = kklf(oi[1]).toString();
-//                System.out.println(rew);
+//                MainActivity.yyyw(rew);
                 ArrayList<ArrayList<String>> raa = kkla(oi[1]);
                 MainActivity.mraa = raa;
                 raams = raa;
                 trackf.write(spr +"\n"+ rew);
                 trackf.close();
-                Log.d(TAG, "erer: 1" + spr.size());
-                Log.d(TAG, "erer: 2" + spr.size() + spr);
+                MainActivity.yyyw(TAG, "erer: 1" + spr.size());
+                MainActivity.yyyw(TAG, "erer: 2" + spr.size() + spr);
                 for (int i = 0; i < spr.size(); i++) {
-                    Log.d("iiii", spr.get(i) + "");
+                    MainActivity.yyyw("iiii", spr.get(i) + "");
                     erer.append(spr.get(i) + " ");
                 }
                 replyyy = spr + "\n" + erer + "   W" + erer.length();
 
             } else if (statement.contains("%22")) {  // replace in web var to " >> %22
-                Log.d(":", "no");
+                MainActivity.yyyw(":", "no");
                 zpchunk(MainActivity.mraa);
             } else if (statement.contains("0-0")) {
                 spr.clear();
                 erer = new StringBuilder("");
                 replyyy = String.valueOf(erer);
-                Log.d("clear", replyyy + erer.length() + spr.size());
+                MainActivity.yyyw("clear", replyyy + erer.length() + spr.size());
             } else if (statement.equals(";")) {   //----------------------copying large files---------------------------
                 for (int i = 0; i < largefile.size(); i++) {
-                    Log.d("large", (int) smb(new File(largefile.get(i))) + "  " + i);
+                    MainActivity.yyyw("large", (int) smb(new File(largefile.get(i))) + "  " + i);
                     replyyy = "large" + (int) smb(new File(largefile.get(i))) + "  " + i + largefile.get(i).substring(largefile.get(i).lastIndexOf("/"));
                     MainActivity.copy1(new File(largefile.get(i)), new File(saveloc + "/MyFolder/ps/zips/chunk/" + largefile.get(i).substring(largefile.get(i).lastIndexOf("/"))));
                 }
             } else if (statement.contains(":")) {   //----------------------send to zip---------------------------
-                Log.d(":", "ye");
+                MainActivity.yyyw(":", "ye");
                 zip(MainActivity.mraa.get(Integer.parseInt(statement.substring(statement.indexOf(":") + 1)) - 1), saveloc + "/MyFolder/ps/zips/chunk" + (statement.indexOf(":") + 1) + ".zip");
             }
-            Log.d("raw array", MainActivity.mraa.size() + "");
+            MainActivity.yyyw("raw array", MainActivity.mraa.size() + "");
             oi = new String[][]{{""}, {""}};
             ffl = 0;
             pfl = 0;
@@ -112,7 +112,7 @@ public class service {
             statementw = "";
 
         } catch (Exception e) {
-            Log.d("1service", e.toString());
+            MainActivity.yyyw("1service", e.toString());
             e.printStackTrace();
         }
         spr.clear();
@@ -121,7 +121,7 @@ public class service {
     public static StringBuilder kklf(String[] file) {
         spr.clear();
         String[] rt = file;
-        Log.d("fllist", rt.length+"");
+        MainActivity.yyyw("fllist", rt.length+"");
         double oii = 0;
         StringBuilder cntnt = new StringBuilder();
         ArrayList<String> chnks = new ArrayList<String>();
@@ -139,16 +139,16 @@ public class service {
                     oii = 0;
                 }
             }else {
-                Log.d("no", String.valueOf(r));
+                MainActivity.yyyw("no", String.valueOf(r));
             }
         }
         chnks.add(String.valueOf(cntnt));
         cnksz.add("=="+(spr.size()+1)+"  size- "+oii + "\n");
-//        System.out.println("--=="+chnks.size()+cnksz);
+//        MainActivity.yyyw("--=="+chnks.size()+cnksz);
         for (int i = 0; i < chnks.size(); i++) {
             cntfl.add(cnksz.get(i)+chnks.get(i));
         }
-        Log.d("==", oii+"");
+        MainActivity.yyyw("==", oii+"");
         spr.add((int)oii);
         oii = 0;
         cntnt.append("=="+(spr.size()+2)+"  size- "+oii + "\n");
@@ -161,13 +161,13 @@ public class service {
     public static ArrayList<ArrayList<String>> kkla(String[] file) throws IOException {
         ArrayList<ArrayList<String> > sprcnt = new ArrayList<ArrayList<String> >();
         String[] rt = file;
-        Log.d("fllist", rt.length+"");
+        MainActivity.yyyw("fllist", rt.length+"");
         double oii = 0;
 
         ArrayList<String> replycnt = new ArrayList<>();
         for (String i : rt){
             File r =new File(i);
-//            Log.d("yes",i);
+//            MainActivity.yyyw("yes",i);
             if (r.exists()){
                 double sizefile = smb(r);
                 if (sizefile<450) {
@@ -183,7 +183,7 @@ public class service {
                     largefile.add(String.valueOf(r));
                 }
             }else {
-                Log.d("no", String.valueOf(r));
+                MainActivity.yyyw("no", String.valueOf(r));
             }
         }
         sprcnt.add(replycnt);
@@ -277,7 +277,7 @@ public class service {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String name = file.getName();
             String line = br.readLine();
-            System.out.println(file.getParent() + "\\part");
+            MainActivity.yyyw(file.getParent() + "\\part");
             while (line != null) {
                 File newFile = new File(file.getParent() + "/part", name + "."
                         + String.format("%03d", counter++));
@@ -296,6 +296,7 @@ public class service {
                 files.add(newFile);
             }
         } catch (IOException e) {
+            MainActivity.yyyw(e+"");
             e.printStackTrace();
         }
         return files;
@@ -305,31 +306,31 @@ public class service {
         int icount=0;
         for (ArrayList<String> i : array){
             icount++;
-            Log.d("--",ttlsz+"  loc"+svlc+"...");
+            MainActivity.yyyw("--",ttlsz+"  loc"+svlc+"...");
             zip(i, svlc+ "/MyFolder/ps/zips/chunk"+icount+".zip");
-            Log.d("check",i.size()+"a"+array.size());
+            MainActivity.yyyw("check",i.size()+"a"+array.size());
 //            for (int o = 0; o < array.get(i).size(); o++ ){
-////                Log.d("arrayfull", String.valueOf(array.get(i).get(o)));
+////                MainActivity.yyyw("arrayfull", String.valueOf(array.get(i).get(o)));
 //
 //            }
         }
     }
 
     public static void zip(ArrayList<String> files, String zipFile) throws IOException {
-        Log.d("zpfl",zipFile);
+        MainActivity.yyyw("zpfl",zipFile);
         rtrn++;
         for (String i : files){
             ttlsz += smb(new File(i.trim()));
         }
         BufferedInputStream origin = null;
-        Log.d("-serv", "zip: "+zipFile);
+        MainActivity.yyyw("-serv", "zip: "+zipFile);
         new File(zipFile).createNewFile();
         try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)))) {
             int BUFFER_SIZE = 6 * 1024;
             byte[] data = new byte[BUFFER_SIZE];
 
             for (int i = 0; i < files.size(); i++) {
-                    Log.d("s",i+"");
+                    MainActivity.yyyw("s",i+"");
                     klm = (int) (klm+smb(new File(files.get(i).trim())));
                     replyyy = (ttlsz - klm) + "  "+rtrn;
                     try {
@@ -346,10 +347,12 @@ public class service {
                             origin.close();
                         }
                     } catch (IOException e) {
+                        MainActivity.yyyw(e+"");
                         e.printStackTrace();
                     }
             }
         } catch (IOException e) {
+            MainActivity.yyyw(e+"");
             e.printStackTrace();
         }
 
@@ -371,10 +374,10 @@ public class service {
 
                 String s = new String(textEncrypted);
                 s = Base64.encodeToString(textEncrypted, Base64.DEFAULT);
-//                Log.d("dec",s);
+//                MainActivity.yyyw("dec",s);
                 return s;
             }else {
-                Log.d("enc-",str);
+                MainActivity.yyyw("enc-",str);
 
 //                String str = java.util.Base64.getEncoder().encodeToString(textEncrypted);
                 byte[] decode = Base64.decode(str, Base64.DEFAULT);
@@ -388,6 +391,7 @@ public class service {
 
 
         }catch (Exception e){
+            MainActivity.yyyw(e+"");
             e.printStackTrace();
         }
 

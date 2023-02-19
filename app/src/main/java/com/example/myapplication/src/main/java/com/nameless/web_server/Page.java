@@ -71,10 +71,11 @@ public class Page {
 	private void setDownloadLink(String directory, int count) throws IOException {
 		dir = new File(directory + "/" + dirList.get(count));
 		if (dir.isDirectory()) {
-			Log.d("-D", "");
+			MainActivity.yyyw("-D", "");
+			
 			index = index.replace("&download&", "<td></td>");
 		} else {
-			Log.d("-f", "\""+dir+"\""+"--\n--"+"\""+dirList.get(count)+"\"");
+			MainActivity.yyyw("-f", "\""+dir+"\""+"--\n--"+"\""+dirList.get(count)+"\"");
 //			try {
 //				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //					Files.write(Paths.get("storage/emulated/0/MyFolder/siterec.txt"), dir.toString().getBytes(), StandardOpenOption.APPEND);
@@ -104,12 +105,12 @@ public class Page {
 
 	private void setSize(String directory, int count) {
 		dir = new File(directory + "/" + dirList.get(count));
-//		Log.d("Size", "setSize: ");
+//		MainActivity.yyyw("Size", "setSize: ");
 		if (dir.isDirectory()) {
-//			Log.d("size", "non-file");
+//			MainActivity.yyyw("size", "non-file");
 			index = index.replace("&size&", "<td></td>");
 		} else {
-//			Log.d("size", "file"+"\""+dir+"\"");
+//			MainActivity.yyyw("size", "file"+"\""+dir+"\"");
 			index = index.replace("&size&", "<td>" + dir.length() / 1024 + " KB</td>");
 		}
 	}
@@ -143,6 +144,7 @@ public class Page {
 			bufferedReader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			MainActivity.yyyw(e+"");
 		}
 		return txt;
 	}
@@ -156,14 +158,6 @@ public class Page {
 	}
 
 	public String getFormatFile(String directoryName) {
-		String[] formatList = {".txt", ".xml", ".log", ".bat", ".cmd", ".py", ".acp", ".acpx", ".cfg", ".css", ".js",
-				".html", ".htm", ".php", ".xhtml", ".c", ".cpp", ".cs", ".h", ".sh", ".java", ".swift", ".vb", ".ini",
-				".png", ".jpg", ".gif", ".bmp", ".TXT"};
-		for (String format : formatList) {
-			if (directoryName.endsWith(format)) {
-				return format;
-			}
-		}
 		return "";
 	}
 
@@ -208,7 +202,25 @@ public class Page {
 //		String userName = getUserName();
 //		if (OS.startsWith("Mac")) dir = new File("/storage/emulated/0/" +  directory);
 		dir = new File("/storage/emulated/0/" + directory);
-		Log.d("TAG", "getMainDir: "+dir+"  "+directory);
+		MainActivity.yyyw("TAG", "getMainDir: "+dir+"  "+directory);
+		if (!getFormatFile(directory).isEmpty()) return dir.getPath();
+		for (File file : dir.listFiles()) {
+			if (!file.getName().startsWith(".") && !dirList.contains(file.getName())
+					&& !file.getName().startsWith("ntuser") && !file.getName().startsWith("NTUSER")) {
+				dirList.add(file.getName());
+			}
+		}
+		return dir.getPath();
+	}
+
+	public String getMainDir(String directory,boolean sd) {
+		File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
+		if (fs.length>1){
+			dir = new File(fs[1]+"/");
+		}
+		dir = new File(dir +"/"+ directory);
+		MainActivity.yyyw("TAG", "getMainDir: "+dir+"  "+directory);
+		
 		if (!getFormatFile(directory).isEmpty()) return dir.getPath();
 		for (File file : dir.listFiles()) {
 			if (!file.getName().startsWith(".") && !dirList.contains(file.getName())
@@ -231,10 +243,12 @@ public class Page {
 			while ((line = br.readLine()) != null) {
 				sb.append(line + System.lineSeparator());
 			}
+			
 
 			return sb.toString();
 		}catch (Exception e){
 			e.printStackTrace();
+			MainActivity.yyyw(e+"");
 			return "error happend";
 		}
 	}

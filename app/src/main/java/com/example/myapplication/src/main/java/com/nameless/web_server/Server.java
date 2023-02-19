@@ -1,5 +1,7 @@
 package com.example.myapplication.src.main.java.com.nameless.web_server;
 
+import com.example.myapplication.MainActivity;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -43,33 +45,29 @@ public class Server {
 		try {
 			InetAddress address = InetAddress.getByName("::");
 			try (ServerSocket serverSocket = new ServerSocket(port, 50, address)) {
-				System.out.println("[SERVER STARTED]-[" + getNowDate() + "]");
+				MainActivity.yyyw("[SERVER STARTED]-[" + getNowDate() + "]");
+				MainActivity.yyyw("[SERVER STARTED]-[" + getNowDate() + "]");
+
 				serverTask();
 				while (!shutdown) {
 					Socket socket = serverSocket.accept();
 					Session session = new Session(socket, users);
 					session.start();
 				}
-			} catch (Exception e) {e.printStackTrace();}
-		} catch (Exception e) {e.printStackTrace();}
-		System.out.println("[Server stopped]-" + "[" + getNowDate() + "]");
+			} catch (Exception e) {
+				e.printStackTrace();
+				MainActivity.yyyw(e+"");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			MainActivity.yyyw(e+"");
+		}
+		MainActivity.yyyw("[Server stopped]-" + "[" + getNowDate() + "]");
 	}
 
 	private void serverTask() {
 		Runnable task = () -> {
 			while (!shutdown) {
-//				System.out.print("\nCommands:\nexit - stop server\nusers - print users on server\n>>>");
-//				String value = new Scanner(System.in).nextLine();
-//				switch (value) {
-//					case "exit":
-//						System.out.println("[Server stopped]-" + "[" + getNowDate() + "]");
-//						System.exit(1);
-//					case "users":
-//						for (String user : users.keySet()) {
-//							System.out.println("User:" + users.get(user) + " | Token:" + user);
-//						}
-//						break;
-//				}
 			}
 		};
 		Thread thread = new Thread(task);

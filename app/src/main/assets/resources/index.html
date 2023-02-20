@@ -2,26 +2,33 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>&title&</title>
+	<title >&title&</title>
 </head>
-<body>
+<body style="background-color: #e1e2e3;">
+<div style="text-align: center;">
+	<a id="para1" style="background-color: #24ed67;" href="http://localhost:9999/ggt">Home</a>
+	<a id="para1" style="background-color: #fc2c03;" href="http://localhost:9999/errppo">Err</a>
+</div>
+<div style="position: relative;padding: 20px;top: 50px;">
 	<div class="path">&path&</div>
+
 	<h3></h3>
 	<table>
 		<thead>
-			<tr>
-				<th></th>
-				<th>Size</th>
-				<th>Name</th>
-			</tr>
+		<tr>
+			<th></th>
+			<th>Size</th>
+			<th>Name</th>
+		</tr>
 		</thead>
 		<tbody>
-			<tr><th colspan="3"><hr></th></tr>
-			<tr><td></td><td></td><td><img src="&back-link-src&">&back-link&</td></tr>
-			&file&
+		<tr><th colspan="3"><hr></th></tr>
+		<tr><td></td><td></td><td><img src="&back-link-src&">&back-link&</td></tr>
+		&file&
 		</tbody>
 	</table>
-	<script type="text/javascript">
+</div>
+<script type="text/javascript">
 		window.onload = function() {
 			var i, list = document.getElementsByClassName("open-dir");
 			for (i = 0; i < list.length; ++i) {
@@ -43,12 +50,23 @@
 			window.location.href = currentLocation;
 		}
 	</script>
-	<style type="text/css">
+<style type="text/css">
 		.path h3 {
 			color: #2c3136;
 			margin-left: 50px;
 			font-size: 25px;
 		}
+    #para1 {
+				text-align: center;
+				color: black;
+				height:200px;
+				width:200px;
+				position: relative;
+				padding: 20px;
+				top: 20px;
+				border: 2px solid #5844f2;
+				border-radius: 20px 20px 20px 20px;
+		    }
 		
 		table {
 			border-collapse: collapse;

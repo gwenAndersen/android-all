@@ -82,23 +82,23 @@ public class Session extends Thread {
 			MainActivity.yyyw("http req"+line);
 
 			if (line != null) {
-				MainActivity.yyyw("TAG", "1");
+//				MainActivity.yyyw("TAG", "1");
 				String token = createToken(clientIP, reader);
 				if (line.contains("control.html") || settings.getKeyWebServer() == 0) {
-					
-					MainActivity.yyyw("TAG", "2");
+
+//					MainActivity.yyyw("TAG", "2");
 					if (settings.getKeyWebFileServer() == 1) {
-						MainActivity.yyyw("TAG", "3");
+//						MainActivity.yyyw("TAG", "3");
 						Boolean isLogin = login(line, token);
 						if (isLogin) {
-							MainActivity.yyyw("TAG", "4");
+//							MainActivity.yyyw("TAG", "4");
 							line = line.split("\n")[0].replace(" HTTP/1.1", "");
 							String request = parser(line);
 							sendRequest(socket, request);
 						} else sendRequest(socket, Page.gtass("resources/control.html"));
-						MainActivity.yyyw("TAG", "-4");
+//						MainActivity.yyyw("TAG", "-4");
 					} else {sendRequest(socket, page.createErrorPage());
-						MainActivity.yyyw("TAG", "-3");
+//						MainActivity.yyyw("TAG", "-3");
 					}
 				}
 				else if (line.contains("errppo")){
@@ -110,11 +110,11 @@ public class Session extends Thread {
 					sendRequest(socket,request);
 				}
 				else if (settings.getKeyWebServer() == 1) {
-					MainActivity.yyyw("TAG", "-2");
+//					MainActivity.yyyw("TAG", "-2");
 					sendRequest(socket, Page.gtass("resources/control.html"));
 				}
 			}
-			MainActivity.yyyw("TAG", "-1");
+//			MainActivity.yyyw("TAG", "-1");
 
 		} catch (Exception e) {e.printStackTrace();
 			MainActivity.yyyw(e+"");}
@@ -171,9 +171,9 @@ public class Session extends Thread {
 	private String parser(String line) throws IOException {
 		String directoryLink = "";
 		if (line.contains("dir=") && line.contains("sd-[") && !line.contains("download=")) {
-			MainActivity.yyyw("loca", "1");
+//			MainActivity.yyyw("loca", "1");
 			String directoryName = splitRequest(line, "dir=");
-			MainActivity.yyyw("sd dir"+directoryName);
+//			MainActivity.yyyw("sd dir"+directoryName);
 			try {
 				directoryLink = page.getMainDir(directoryName,true);
 			} catch (Exception e) {
@@ -190,7 +190,7 @@ public class Session extends Thread {
 			System.out.println("======+");
 			if (line.contains("cerr")){
 				System.out.println("======");
-				MainActivity.yyyw("[clr]");
+//				MainActivity.yyyw("[clr]");
 			}
 			String dbanpg = Page.gtass("resources/err.html");
 			if (dbanpg.contains("&result&")){
@@ -199,7 +199,7 @@ public class Session extends Thread {
 			return qq;
 		}
 		else if (line.contains("dir=") && !line.contains("download=")) {
-			MainActivity.yyyw("loca", "2");
+//			MainActivity.yyyw("loca", "2");
 			String directoryName = splitRequest(line, "dir=");
 			try {
 				directoryLink = page.getMainDir(directoryName);
@@ -214,7 +214,7 @@ public class Session extends Thread {
 			return index;
 		}
 		else if (line.contains("download=" )&& line.contains("sd-[")) {
-			MainActivity.yyyw("loca", "3");
+//			MainActivity.yyyw("loca", "3");
 			String filePath = splitRequest(line, "dir=").replace("download=", "")
 					.replace("//", "");
 			String path = page.getMainDir("",true) + "/" + filePath;
@@ -226,7 +226,7 @@ public class Session extends Thread {
 			return path + "pp&jk" + filePath + "pp&jk" + new File(path).length() + "&keyword=download";
 		}
 		else if (line.contains("download=")) {
-			MainActivity.yyyw("loca", "4");
+//			MainActivity.yyyw("loca", "4");
 			String filePath = splitRequest(line, "dir=").replace("download=", "")
 					.replace("//", "");
 			String path = page.getMainDir("") + "/" + filePath;
@@ -238,28 +238,28 @@ public class Session extends Thread {
 			return path + "pp&jk" + filePath + "pp&jk" + new File(path).length() + "&keyword=download";
 		}
 		else if (line.contains("ggt")){
-			MainActivity.yyyw("loca", "5");
+//			MainActivity.yyyw("loca", "5");
 			try{
 				if (line.contains("arg=[")) {
 					String iop = line.substring(line.indexOf("arg=[") + 5, line.indexOf("]=arg"));
-					MainActivity.yyyw("ARG:  ", iop);
+					MainActivity.yyyw("ARG:  ", "\""+iop+"\"");
 					line.replace(iop, "");
 					return dban(iop);
 				}
 			}catch (Exception e){
 				MainActivity.yyyw(e+"");
-				MainActivity.yyyw("at arg");
+//				MainActivity.yyyw("at arg");
 				e.printStackTrace();
 			}
 			return crtdban("NO RESULT");
 		}
 		else if (line.contains("sd-[")){
-			MainActivity.yyyw("loca", "6");
+//			MainActivity.yyyw("loca", "6");
 			String directory = page.getMainDir("",true);
 			return page.createIndexPage(directory, true);
 		}
 		else if (line.equals("GET /") || line.contains("entry")) {
-			MainActivity.yyyw("loca", "7");
+//			MainActivity.yyyw("loca", "7");
 			String directory = page.getMainDir("");
 			return page.createIndexPage(directory, true);
 		} else {

@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +19,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.myapplication.src.main.java.com.nameless.web_server.Server;
 import com.example.myapplication.src.main.java.com.nameless.web_server.Session;
@@ -31,6 +38,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private static Context context;
     public static StringBuilder dbanrep = new StringBuilder();
     public static ArrayList<ArrayList<String>> mraa;
-
+    String TAG = "TAG";
     public static String logg = "";
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +60,17 @@ public class MainActivity extends AppCompatActivity {
         llga.setMovementMethod(new ScrollingMovementMethod());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            Intent intent = new Intent();
+            String packageName = getPackageName();
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                startActivity(intent);
             }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-            }
-        }
+        startServiceViaWorker();
+
         MainActivity.context = getApplicationContext();
         new Thread(new Runnable() {
             public void run() {
@@ -67,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     new Server();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    MainActivity.yyyw(e+"");
+                    MainActivity.yyyw(e + "");
                 }
             }
         }).start();
@@ -84,17 +95,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-
-//        new Thread(new Runnable() {
-//            public void run() {
-//                String aa = "/ggt";
-//                String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
-//                Uri uri = Uri.parse("http://localhost:9999"+"/control.html?entry=NAMELESS_WEB_SERVER/123/?dir=Android?dir=data?dir=com.example.myapplication?dir=files");
-//                // missing 'http://' will cause crashed
-//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//                startActivity(intent);
-//            }
-//        }).start();
 
         File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
         System.out.println(fs[0]);
@@ -119,9 +119,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
-
-
+        try {
+            prmsn();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
 
         cnt.setOnClickListener(new View.OnClickListener() {
@@ -155,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
     public static Context getAppContext() {
         return MainActivity.context;
     }
@@ -172,22 +176,100 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             MainActivity.yyyw(e.toString());
         }
     }
-    public static void yyyw(String a){
-        logg = a + "\n" + logg;
+
+    public static void yyyw(String a) {
+        if (a.contains("[clr]")) {
+            logg = "";
+        } else {
+            logg = a + "\n" + logg;
+        }
 //        logg.append(a+"\n");
         System.out.println(a);
     }
-    public static void yyyw(String a,String b){
-        logg = a+","+b+"\n" + logg;
+
+    public static void yyyw(String a, String b) {
+        logg = a + "," + b + "\n" + logg;
 //        logg.append(a+","+b+"\n");
-        Log.d(a , b);
+        Log.d(a, b);
     }
 
+    //=========================================================
+
+    public void prmsn() throws InterruptedException {
+
+        int ASK_MULTIPLE_PERMISSION_REQUEST_CODE=101;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_CONTACTS,
+                            Manifest.permission.READ_SMS,
+                            Manifest.permission.READ_CALL_LOG,
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    ASK_MULTIPLE_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    //service background
+    public void onStartServiceClick(View v) {
+        startService();
+    }
+
+    public void onStopServiceClick(View v) {
+        stopService();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy called");
+        stopService();
+        super.onDestroy();
+    }
+
+    public void startService() {
+        Log.d(TAG, "startService called");
+        if (!MyService.isServiceRunning) {
+            Intent serviceIntent = new Intent(this, MyService.class);
+            ContextCompat.startForegroundService(this, serviceIntent);
+        }
+    }
+
+    public void stopService() {
+        Log.d(TAG, "stopService called");
+        if (MyService.isServiceRunning) {
+            Intent serviceIntent = new Intent(this, MyService.class);
+            stopService(serviceIntent);
+        }
+    }
+
+    public void startServiceViaWorker() {
+        Log.d(TAG, "startServiceViaWorker called");
+        String UNIQUE_WORK_NAME = "StartMyServiceViaWorker";
+        WorkManager workManager = WorkManager.getInstance(this);
+
+        // As per Documentation: The minimum repeat interval that can be defined is 15 minutes
+        // (same as the JobScheduler API), but in practice 15 doesn't work. Using 16 here
+        PeriodicWorkRequest request =
+                new PeriodicWorkRequest.Builder(
+                        MyWorker.class,
+                        16,
+                        TimeUnit.MINUTES)
+                        .build();
+
+        // to schedule a unique work, no matter how many times app is opened i.e. startServiceViaWorker gets called
+        // do check for AutoStart permission
+        workManager.enqueueUniquePeriodicWork(UNIQUE_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request);
+
+    }
 
 }
+
+
+
 

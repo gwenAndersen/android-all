@@ -181,6 +181,7 @@ public class service {
                     }
                 }else {
                     largefile.add(String.valueOf(r));
+                    MainActivity.yyyw("large file size"+smb(r)+"  "+r);
                 }
             }else {
                 MainActivity.yyyw("no", String.valueOf(r));

@@ -32,6 +32,15 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true">
+        <receiver
+            android:name="com.example.myapplication.MyReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name="com.example.myapplication.MyService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="TODO" />
         <activity android:name="com.example.myapplication.MainActivity"
             android:exported="true">
             <intent-filter>

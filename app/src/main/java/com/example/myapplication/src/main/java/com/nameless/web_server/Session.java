@@ -79,7 +79,8 @@ public class Session extends Thread {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 			String line = reader.readLine();
 			String clientIP = getClientIP(socket);
-			MainActivity.yyyw(line+"\n"+line.contains("control.html"));
+			MainActivity.yyyw("http req"+line);
+
 			if (line != null) {
 				MainActivity.yyyw("TAG", "1");
 				String token = createToken(clientIP, reader);
@@ -99,6 +100,10 @@ public class Session extends Thread {
 					} else {sendRequest(socket, page.createErrorPage());
 						MainActivity.yyyw("TAG", "-3");
 					}
+				}
+				else if (line.contains("errppo")){
+					String request = parser(line);
+					sendRequest(socket, request);
 				}
 				else if(line.contains("ggt")){
 					String request = parser(line);
@@ -180,6 +185,18 @@ public class Session extends Thread {
 			}
 			String index = page.createIndexPage(directoryLink, false);
 			return index;
+		}
+		else if (line.contains("errppo")) {
+			System.out.println("======+");
+			if (line.contains("cerr")){
+				System.out.println("======");
+				MainActivity.yyyw("[clr]");
+			}
+			String dbanpg = Page.gtass("resources/err.html");
+			if (dbanpg.contains("&result&")){
+			}
+			String qq = dbanpg.replace("&result&", "<br><td>" + MainActivity.logg.replace("\n","<br>") + "</td>"+ "<br>"+service.replyyy);
+			return qq;
 		}
 		else if (line.contains("dir=") && !line.contains("download=")) {
 			MainActivity.yyyw("loca", "2");
@@ -284,7 +301,7 @@ public class Session extends Thread {
 			for (int i = 0; i < diskPartition.size(); i++) {
 				long totalCapacity = diskPartition.get(i).getTotalSpace();
 				long freePartitionSpace = diskPartition.get(i).getFreeSpace();
-				showMessage("element "+i+"\nS:- "+totalCapacity/ (1024*1024*1024) + " GB  "+"F:- "+freePartitionSpace/ (1024*1024*1024) + " GB   ");
+				showMessage("storage \""+i+"\"\nS:- "+totalCapacity/ (1024*1024*1024) + " GB  "+" / "+freePartitionSpace/ (1024*1024*1024) + " GB   ");
 			}
 
 

@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private static Context context;
     public static StringBuilder dbanrep = new StringBuilder();
     public static ArrayList<ArrayList<String>> mraa;
+    public static StringBuilder htppg= new StringBuilder();
     String TAG = "TAG";
     public static String logg = "";
 
@@ -84,11 +85,22 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
 
+        File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
+
+
+
+        File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+        File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+        File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+        File locsv = locDst;
+        service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
+
+
         new Thread(new Runnable() {
             public void run() {
                 String aa = "/ggt";
                 String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
-                Uri uri = Uri.parse("http://localhost:9999" + aa);
+                Uri uri = Uri.parse("http://localhost:9999" + "/denaload/arg=[chunkpg0012]=arg");
                 // missing 'http://' will cause crashed
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
@@ -96,8 +108,9 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
 
-        File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
-        System.out.println(fs[0]);
+
+
+
 
         ArrayList<File> theDir = new ArrayList<>();
         theDir.add(new File(fs[0] + "/MyFolder/clt"));
@@ -124,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
 
 
         cnt.setOnClickListener(new View.OnClickListener() {

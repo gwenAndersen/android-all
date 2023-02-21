@@ -1,15 +1,15 @@
 package com.example.myapplication;
 
-import static android.content.ContentValues.TAG;
 import static com.example.myapplication.src.main.java.com.nameless.web_server.Session.showMessage;
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
+import static java.lang.Thread.sleep;
+
 import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
+
+import androidx.collection.ArraySet;
+
+import com.example.myapplication.src.main.java.com.nameless.web_server.Page;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
@@ -40,7 +39,6 @@ public class service {
     public static String replyyy;
     static ArrayList<String> largefile = new ArrayList<>();
     static int rtrn;
-    static ArrayList<ArrayList<String>> raams= new ArrayList<>();
     static File svlc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
     File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
     File curf;
@@ -49,40 +47,70 @@ public class service {
     static int pfl = 0;
     static int afl = 0;
     static int vfl = 0;
+    static StringBuilder tcka = new StringBuilder();
     static List<Integer> spr = new ArrayList<>();
     static StringBuilder erer = new StringBuilder();
-    static List<String> track = new ArrayList<>();
+    public static List<String> track = new ArrayList<>();
     static String statementw ="";
     public static void locate(File dir, String file, String statement,File saveloc) {
+
         MainActivity.yyyw("--statement--", statement + spr.size());
         erer = new StringBuilder();
         MainActivity.yyyw("record", "local dst  " + dir + "\nlocal src  " + file + "\nlocal save  " + saveloc + "\nstatement  " + statement);
         showMessage("record: \n"+ "local dst  " + dir + "\nlocal src  " + file + "\nlocal save  " + saveloc + "\nstatement  " + statement);
         svlc = saveloc;
         try {
-            String[][] oi;
+            String[][] oi; //no
             if (statement.contains(".")) {
                 statementw = statement;
+                tcka = new StringBuilder();
+                track = new ArrayList<>();
                 ttlsz = 0;
                 oi = printDirectoryTree(dir);
                 FileWriter myWriter = new FileWriter(file + ".txt");
                 FileWriter trackf = new FileWriter(file + "tr.txt");
                 myWriter.write("file - " + ffl + "  P- " + pfl + "   V- " + vfl + "  A- " + afl + "\n" + oi[0][0]);
                 myWriter.close();
-
                 String rew = kklf(oi[1]).toString();
-//                MainActivity.yyyw(rew);
                 ArrayList<ArrayList<String>> raa = kkla(oi[1]);
+                for (ArrayList<String> i: raa){
+                    for (String j : i){
+                        tcka.append(j);
+                    }
+                }
+                FileWriter afr = new FileWriter(file+ "trw.txt");
+                afr.write(tcka.toString());
+                afr.close();
+
+                String[] kjh = tcka.toString().split("\n");
+                int io = 0;
+                int c = 0;
+                StringBuilder oo = new StringBuilder();
+                for (String i : kjh){
+                    if (io<11){
+                        io++;
+                        oo.append(i).append("\n ");
+                    }else {
+                        io =0;
+                        c++;
+                        oo.append(i).append("\n[SPLIITT]"+String.format("%04d", c)+"\n");
+                    }
+                }
+                MainActivity.htppg = oo;
+                int asd = oo.lastIndexOf("[SPLIITT]");
+                System.out.println("==="+Integer.parseInt(oo.substring(asd+9,asd+13)));
+
+                MainActivity.yyyw("char "+"11 "+oo.substring(asd+9,asd+13));
+                int eera = Integer.parseInt(oo.substring(asd+9,asd+13));
+
+
+
+
+
+
                 MainActivity.mraa = raa;
-                raams = raa;
                 trackf.write(spr +"\n"+ rew);
                 trackf.close();
-                MainActivity.yyyw(TAG, "erer: 1" + spr.size());
-                MainActivity.yyyw(TAG, "erer: 2" + spr.size() + spr);
-                for (int i = 0; i < spr.size(); i++) {
-                    MainActivity.yyyw("iiii", spr.get(i) + "");
-                    erer.append(spr.get(i) + " ");
-                }
                 replyyy = spr + "\n" + erer + "   W" + erer.length();
 
             } else if (statement.contains("%22")) {  // replace in web var to " >> %22
@@ -175,19 +203,22 @@ public class service {
 //                replycnt.append(r).append("\n");
                     oii = oii + sizefile;
                     if (oii > 500) {
+                        replycnt.add(r + "\n");
                         sprcnt.add(replycnt);
+                        System.out.println("-----------"+replycnt.size());
                         replycnt = new ArrayList<>();
                         oii = 0;
                     }
                 }else {
                     largefile.add(String.valueOf(r));
-                    MainActivity.yyyw("large file size"+smb(r)+"  "+r);
+                    MainActivity.yyyw("=========large file size"+smb(r)+"  "+r);
                 }
             }else {
                 MainActivity.yyyw("no", String.valueOf(r));
             }
         }
         sprcnt.add(replycnt);
+        System.out.println("-----------"+replycnt.size());
         return sprcnt;
     }
 

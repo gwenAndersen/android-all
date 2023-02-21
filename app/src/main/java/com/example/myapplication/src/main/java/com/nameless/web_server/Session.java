@@ -79,7 +79,7 @@ public class Session extends Thread {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 			String line = reader.readLine();
 			String clientIP = getClientIP(socket);
-			MainActivity.yyyw("http req"+line);
+			MainActivity.yyyw("http req - "+line);
 
 			if (line != null) {
 //				MainActivity.yyyw("TAG", "1");
@@ -100,6 +100,14 @@ public class Session extends Thread {
 					} else {sendRequest(socket, page.createErrorPage());
 //						MainActivity.yyyw("TAG", "-3");
 					}
+				}
+//				else if (line.contains("download")){
+//
+//				}
+				else if (line.substring(0,13).equals("GET /denaload")){
+					String request = parser(line);
+					sendRequest(socket, request);
+										sendRequest(socket, Page.gtass("resources/dnl.html"));
 				}
 				else if (line.contains("errppo")){
 					String request = parser(line);
@@ -168,7 +176,7 @@ public class Session extends Thread {
 		return socket.getInetAddress().toString();
 	}
 
-	private String parser(String line) throws IOException {
+	private String parser(String line) throws IOException, InterruptedException {
 		String directoryLink = "";
 		if (line.contains("dir=") && line.contains("sd-[") && !line.contains("download=")) {
 //			MainActivity.yyyw("loca", "1");
@@ -186,11 +194,22 @@ public class Session extends Thread {
 			String index = page.createIndexPage(directoryLink, false);
 			return index;
 		}
+		else if (line.substring(0,13).equals("GET /denaload")){
+			String dbanpg = Page.gtass("resources/dnl.html");
+			if (line.contains("arg=[")) {
+				String iop = line.substring(line.indexOf("arg=[") + 5, line.indexOf("]=arg"));
+				MainActivity.yyyw("ARG:  ", "\""+iop+"\"");
+				line.replace(iop, "");
+				dban(iop);
+			}
+			if (dbanpg.contains("&links&")){
+			}
+			String qq = dbanpg.replace("&links&", ""); //window.open('http://google.com');window.open('http://google.com');
+			return qq;
+		}
 		else if (line.contains("errppo")) {
-			System.out.println("======+");
 			if (line.contains("cerr")){
-				System.out.println("======");
-//				MainActivity.yyyw("[clr]");
+				MainActivity.yyyw("[clr]");
 			}
 			String dbanpg = Page.gtass("resources/err.html");
 			if (dbanpg.contains("&result&")){
@@ -354,13 +373,16 @@ public class Session extends Thread {
 			}
 			return crtdban(MainActivity.dbanrep+"");
 		}
+		else if (arg.substring(0,7).equals("chunkpg")) {
+			System.out.println("======"+arg.substring(7));
+			StringBuilder er = MainActivity.htppg;
+			int trgt = er.indexOf("[SPLIITT]"+arg.substring(7));
+			System.out.println(trgt+"\n"+"[SPLIITT]"+arg.substring(7));
+			String ert = er.substring(trgt,er.indexOf("[SPLIITT]"+String.format("%04d", (Integer.parseInt(arg.substring(7))+1))));
 
-
-
-
-
-
-
+			System.out.println(trgt+" , "+er.indexOf("[SPLIITT]"+String.format("%04d", (Integer.parseInt(arg.substring(7))+1)))+"+++++--"+ert);
+			return "none";
+		}
 		else if (arg.equals("q")){ //ABORT
 			try{
 				File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
@@ -391,7 +413,6 @@ public class Session extends Thread {
 			}
 			return crtdban(MainActivity.dbanrep+"");
 		}
-
 		else{   //========================dot=============================
 			MainActivity.yyyw("rrrr", arg);
 			try {

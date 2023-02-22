@@ -90,6 +90,7 @@ public class Session extends Thread {
 					if (settings.getKeyWebFileServer() == 1) {
 //						MainActivity.yyyw("TAG", "3");
 						Boolean isLogin = login(line, token);
+						System.out.println(line);
 						if (isLogin) {
 //							MainActivity.yyyw("TAG", "4");
 							line = line.split("\n")[0].replace(" HTTP/1.1", "");
@@ -106,8 +107,9 @@ public class Session extends Thread {
 //				}
 				else if (line.substring(0,13).equals("GET /denaload")){
 					String request = parser(line);
+//					System.out.println("======\n"+request+"\n========");
 					sendRequest(socket, request);
-										sendRequest(socket, Page.gtass("resources/dnl.html"));
+//					sendRequest(socket, Page.gtass("resources/dnl.html"));
 				}
 				else if (line.contains("errppo")){
 					String request = parser(line);
@@ -200,11 +202,11 @@ public class Session extends Thread {
 				String iop = line.substring(line.indexOf("arg=[") + 5, line.indexOf("]=arg"));
 				MainActivity.yyyw("ARG:  ", "\""+iop+"\"");
 				line.replace(iop, "");
-				dban(iop);
+				return dban(iop);
 			}
-			if (dbanpg.contains("&links&")){
+			if (dbanpg.contains("//&links&")&&dbanpg.contains("&value&")){
 			}
-			String qq = dbanpg.replace("&links&", ""); //window.open('http://google.com');window.open('http://google.com');
+			String qq = dbanpg.replace("//&links&", "").replace("&value&","1"); //window.open('http://google.com');window.open('http://google.com');
 			return qq;
 		}
 		else if (line.contains("errppo")) {
@@ -218,7 +220,7 @@ public class Session extends Thread {
 			return qq;
 		}
 		else if (line.contains("dir=") && !line.contains("download=")) {
-//			MainActivity.yyyw("loca", "2");
+			MainActivity.yyyw("parser", "download"+line);
 			String directoryName = splitRequest(line, "dir=");
 			try {
 				directoryLink = page.getMainDir(directoryName);
@@ -281,7 +283,8 @@ public class Session extends Thread {
 //			MainActivity.yyyw("loca", "7");
 			String directory = page.getMainDir("");
 			return page.createIndexPage(directory, true);
-		} else {
+		}
+		else {
 			return crtdban("NO RESULT");
 		}
 	}
@@ -380,8 +383,21 @@ public class Session extends Thread {
 			System.out.println(trgt+"\n"+"[SPLIITT]"+arg.substring(7));
 			String ert = er.substring(trgt,er.indexOf("[SPLIITT]"+String.format("%04d", (Integer.parseInt(arg.substring(7))+1))));
 
-			System.out.println(trgt+" , "+er.indexOf("[SPLIITT]"+String.format("%04d", (Integer.parseInt(arg.substring(7))+1)))+"+++++--"+ert);
-			return "none";
+//			System.out.println(trgt+" , "+er.indexOf("[SPLIITT]"+String.format("%04d", (Integer.parseInt(arg.substring(7))+1)))+"+++++--"+ert);
+
+			String fds = Page.gtass("resources/dnl.html");
+			String lnks = addlnk(ert);
+			if (fds.contains("//&links&")){
+				fds = fds.replace("//&links&",lnks);
+			}
+			if (fds.contains("&value&")){
+				fds = fds.replace("&value&",Integer.parseInt(arg.substring(7))+"");
+			}
+			if (fds.contains("&result&")){
+				fds = fds.replace("&result&",ert);
+			}
+
+			return fds;
 		}
 		else if (arg.equals("q")){ //ABORT
 			try{
@@ -562,43 +578,22 @@ public class Session extends Thread {
 		} catch (Exception e) {
 			MainActivity.yyyw(e+"");e.printStackTrace();}
 	}
-
-	public void multifl(File ffile){
-		try {
-			String httpResponse = "HTTP/1.1 200 OK\r\n";
-			OutputStream outputStream = socket.getOutputStream();
-//			OutputStream outputStream = socket.getOutputStream();
-			PrintStream ps = new PrintStream(outputStream);
-			MainActivity.yyyw("data", "sendRequest: "+ffile);
-//				byte[] fileInArray = getBytes(data[0]);
-			ps.printf(httpResponse);
-			ps.print("Content-Disposition: form-data; name=\"myFile\"; filename=\"" + ffile.toString().substring(ffile.toString().lastIndexOf("/")) + "\"\r\n");
-			ps.printf("Content-Type: text/plain; charset=utf-8\r\n\r\n");
-			File file = new File(String.valueOf(ffile));
-			FileInputStream fis = new FileInputStream(file);
-			BufferedInputStream bis = new BufferedInputStream(fis);
-
-			DataInputStream dis = new DataInputStream(bis);
-
-			DataOutputStream dos = new DataOutputStream(outputStream);
-
-//				dos.writeUTF(file.getName());
-//				dos.writeLong(file.length());
-
-			byte[] mybytearray = new byte[4096];
-			int read = dis.read(mybytearray);
-			while (read != -1) {
-				dos.write(mybytearray, 0, read);
-				read = dis.read(mybytearray);
+	public static String addlnk(String a){
+		a.split("\n");
+		StringBuilder ooop = new StringBuilder();
+		System.out.println("addlink lenth of file"+a.split("\n").length+"\n"+a);
+		for (String i : a.split("\n")) {
+			i = i.trim();
+			if (new File(i).exists()) {
+				System.out.println("exists"+i);
+//				System.out.println(i.length() + i);
+				String p = i.substring(20);
+//				System.out.println(p);
+				String d = p.substring(0, p.lastIndexOf("/")).replace("/", "?dir=") + p.substring(p.lastIndexOf("/")).replace("/", "?download=");
+				ooop.append("window.open(\"http://localhost:9999/control.html?entry=NAMELESS_WEB_SERVER/123//" + d + "\");\n");
 			}
-			dos.flush();
-			outputStream.flush();
-//				outputStream.write(fileInArray);
-//				fileInArray = getBytes("");
-		} catch (Exception e) {
-			MainActivity.yyyw(e+"");
-			e.printStackTrace();
 		}
+		return ooop.toString();
 	}
 
 }

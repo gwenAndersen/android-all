@@ -12,20 +12,61 @@
 <div class="form animated pulse">
 	<h3 class="form animated pulse">CMD <\></h3>
 	<div class="form animated pulse"><a id="para1" style="background-color: #A3BB98;" href="http://localhost:9999/errppo">Refresh</a>
+		<a id="para1" style="background-color: #fad14b;" href="http://localhost:9999/control.html?entry=NAMELESS_WEB_SERVER/123/">login</a>
 		<a style="background-color: #fad14b;" id="yourlink" style="background-color: #A3BB98;" href="#" class="yourlink" id="yourlink">open</a>
 		<a id="para1" style="background-color: #24ed67;" href="http://localhost:9999/ggt">Home</a></div>
 
 	<br>
-	<p id="para2" class="form animated slideInLeft" style="background-color:#1a1919;color:white;text-align: left;" >&result&</p>
+	<a style="padding:15px;width:200px;background-color: #A3BB98;" id="pre" class="para1" >PRE</a>
+	<input style="width:30px;height:30px;" id="arg" class="para1" type="text" value=&value&>
+	<a style="padding:15px;width:30px;background-color: #A3BB98;" id="next" class="para1" >NEXT</a><br>
+	<button style="top:45px;padding:5px;height:40px;width:70px;background-color: #A3BB98;" id="entry" class="para1">Submit</button>
+	<div id="para2" class="form animated slideInLeft" style="top:60px;background-color:#1a1919;color:white;text-align: left;" >&result&</div>
 </div>
 
 </div>
 <script type="text/javascript">
 			document.getElementById('yourlink').onclick = function yourlink(){
-				&links&
-				// window.open('http://google.com');
+				//&links&
 				console.log("huh")
 			}
+      document.getElementById('entry').onclick = function entry(){
+				console.log("huh")
+				var arg = document.getElementById('arg').value;
+				var str = "" + arg
+				var pad = "0000"
+				var ans = pad.substring(0, pad.length - str.length) + str
+				var xmlHttp = new XMLHttpRequest();
+				var currentLocation = window.location.href;
+				currentLocation = "?arg=[chunkpg" + ans + "]=arg" ;
+				window.location.href = currentLocation + "/";
+				console.log(currentLocation+ans)
+			}
+			document.getElementById('next').onclick = function nnext(){
+				console.log("huh")
+				var arg = document.getElementById('arg').value;
+				var str = "" + arg
+				var pad = "0000"
+				var ans = pad.substring(0, pad.length - str.length) + (parseInt(str)+1)
+				var xmlHttp = new XMLHttpRequest();
+				var currentLocation = window.location.href;
+				currentLocation = "?arg=[chunkpg" + ans + "]=arg" ;
+				window.location.href = currentLocation + "/";
+				console.log(currentLocation+ans)
+			}
+			document.getElementById('pre').onclick = function prev(){
+				console.log("huh")
+				var arg = document.getElementById('arg').value;
+				var str = "" + arg
+				var pad = "0000"
+				var ans = pad.substring(0, pad.length - str.length) + (parseInt(str)-1)
+				var xmlHttp = new XMLHttpRequest();
+				var currentLocation = window.location.href;
+				currentLocation = "?arg=[chunkpg" + ans + "]=arg" ;
+				window.location.href = currentLocation + "/";
+				console.log(currentLocation+ans)
+			}
+
 		</script>
 <style type="text/css">
 			body {
@@ -45,6 +86,17 @@
 				color: #930;
 			}
 			#para1 {
+				text-align: center;
+				color: black;
+				height:200px;
+				width:200px;
+				position: relative;
+				padding: 20px;
+				top: 30px;
+				border: 2px solid #5844f2;
+				border-radius: 20px 20px 20px 20px;
+		    }
+			.para1 {
 				text-align: center;
 				color: black;
 				height:200px;

@@ -1,10 +1,8 @@
 package com.example.myapplication;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,27 +16,20 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.example.myapplication.src.main.java.com.nameless.web_server.Server;
-import com.example.myapplication.src.main.java.com.nameless.web_server.Session;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -100,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 String aa = "/ggt";
                 String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
-                Uri uri = Uri.parse("http://localhost:9999" + "/denaload/arg=[chunkpg0012]=arg");
+                Uri uri = Uri.parse("http://localhost:9999" + "/denaload/");
                 // missing 'http://' will cause crashed
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
@@ -211,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
 //        logg.append(a+","+b+"\n");
         Log.d(a, b);
     }
+
 
     //=========================================================
 

@@ -71,23 +71,14 @@ public class Page {
 	private void setDownloadLink(String directory, int count) throws IOException {
 		dir = new File(directory + "/" + dirList.get(count));
 		if (dir.isDirectory()) {
-			MainActivity.yyyw("-D", "");
+//			MainActivity.yyyw("-D", "");
 			
 			index = index.replace("&download&", "<td></td>");
 		} else {
-			MainActivity.yyyw("-f", "\""+dir+"\""+"--\n--"+"\""+dirList.get(count)+"\"");
-//			try {
-//				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//					Files.write(Paths.get("storage/emulated/0/MyFolder/siterec.txt"), dir.toString().getBytes(), StandardOpenOption.APPEND);
-//				}
-//			}catch (IOException e) {
-//				//exception handling left as an exercise for the reader
-//			}
+//			MainActivity.yyyw("-f", "\""+dir+"\""+"--\n--"+"\""+dirList.get(count)+"\"");
 			index = index.replace("&download&", "<td><a onClick=\"downloadFile('" + dirList.get(count)
 					+ "')\"><img src=\"" + gtass("resources/download_icon.txt") +"\"></a></td>");
 		}
-//		index = index.replace("&download&", "<td><a onClick=\"downloadFile('" + dirList.get(count)
-//				+ "')\"><img src=\"" + gtass("resources/download_icon.txt") +"\"></a></td>");
 	}
 
 	public void clearDirectoryList() {dirList.clear();}

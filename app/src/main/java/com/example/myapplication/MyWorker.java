@@ -39,11 +39,11 @@ public class MyWorker extends Worker {
         int rr = 0;
         while(true) {
             rr++;
-            Log.d("iio","hello "+rr);
+            Log.d("worker","hello "+rr);
             if (rr>60){
                 break;
             }
-            wrtfl("MyFolder","bbl-cnt.txt",rr+"  "+new SimpleDateFormat("HH:mm").format(new java.util.Date())+"\n",true);
+//            wrtfl("MyFolder","bbl-cnt.txt",rr+"  "+new SimpleDateFormat("HH:mm").format(new java.util.Date())+"\n",true);
             try {
                 Thread.sleep(120000);
             } catch (InterruptedException e) {
@@ -58,23 +58,23 @@ public class MyWorker extends Worker {
         Log.d(TAG, "onStopped called for: " + this.getId());
         super.onStopped();
     }
-    public  void wrtfl(String ffolder,String fname,String content,boolean append) {
-        String rootPath = null;
-        File f = null;
-        try {
-            rootPath = Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + "/" + ffolder + "/";
-            File root = new File(rootPath);
-            if (!root.exists()) {
-                root.mkdirs();
-            }
-            f = new File(rootPath + fname);
-            FileOutputStream out = new FileOutputStream(f,append);
-            out.write(content.getBytes());
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public  void wrtfl(String ffolder,String fname,String content,boolean append) {
+//        String rootPath = null;
+//        File f = null;
+//        try {
+//            rootPath = Environment.getExternalStorageDirectory()
+//                    .getAbsolutePath() + "/" + ffolder + "/";
+//            File root = new File(rootPath);
+//            if (!root.exists()) {
+//                root.mkdirs();
+//            }
+//            f = new File(rootPath + fname);
+//            FileOutputStream out = new FileOutputStream(f,append);
+//            out.write(content.getBytes());
+//            out.flush();
+//            out.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

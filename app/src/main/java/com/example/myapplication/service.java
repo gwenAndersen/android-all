@@ -4,6 +4,9 @@ import static com.example.myapplication.src.main.java.com.nameless.web_server.Se
 
 import static java.lang.Thread.sleep;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
 
@@ -429,6 +432,7 @@ public class service {
 
         return str;
     }
+
 
 
 

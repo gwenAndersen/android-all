@@ -1,18 +1,23 @@
 package com.example.myapplication;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.format.Formatter;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +38,9 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+    public static String YOUR_AWESOME_ACTION = "YourAwesomeAction";
+    static final String MyOnClick = "myOnClickTag";
+
 
     //    public static String rawdir = "/storage/emulated/0/";
     private static Context context;
@@ -41,29 +49,47 @@ public class MainActivity extends AppCompatActivity {
     public static StringBuilder htppg= new StringBuilder();
     String TAG = "TAG";
     public static String logg = "";
+    public static String addrs = "";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setTitle("Client");
+//        setContentView(R.layout.activity_main);
+//        setTitle("Client");
         Button cnt = findViewById(R.id.button);
         Button ref = findViewById(R.id.button2);
         TextView llga = findViewById(R.id.image_view);
-        llga.setMovementMethod(new ScrollingMovementMethod());
+//        llga.setMovementMethod(new ScrollingMovementMethod());
+
+        MainActivity.context = getApplicationContext();
+
+        try {
+            Context context = MainActivity.getAppContext().getApplicationContext();
+            WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            addrs = "http://" + Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+            yyyw("address was found"+addrs);
+        }catch (Exception e){
+            addrs = "http://localhost";
+            yyyw("!!! Address not found -"+e);
+        }
+
+
+        RemoteViews wee = new RemoteViews(context.getPackageName(), R.layout.bookmark);
+        wee.setOnClickPendingIntent(R.id.button,
+                getPendingSelfIntent(context, MyOnClick));
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Intent intent = new Intent();
+            Intent intentt = new Intent();
             String packageName = getPackageName();
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
             if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + packageName));
-                startActivity(intent);
+                intentt.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intentt.setData(Uri.parse("package:" + packageName));
+                startActivity(intentt);
             }
         }
         startServiceViaWorker();
 
-        MainActivity.context = getApplicationContext();
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -84,19 +110,19 @@ public class MainActivity extends AppCompatActivity {
         File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
         File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
         File locsv = locDst;
-        service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
+//        service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
 
 
-        new Thread(new Runnable() {
-            public void run() {
-                String aa = "/ggt";
-                String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
-                Uri uri = Uri.parse("http://localhost:9999" + "/denaload/");
-                // missing 'http://' will cause crashed
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            public void run() {
+//                String aa = "/ggt";
+//                String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
+//                Uri uri = Uri.parse("http://localhost:9999" + "/ggt");
+//                // missing 'http://' will cause crashed
+//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                startActivity(intent);
+//            }
+//        }).start();
 
 
 
@@ -131,34 +157,34 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        cnt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    public void run() {
-
-                        File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-                        File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-                        File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-                        File locsv = locDst;
-                        service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
-
-                    }
-                }).start();
-            }
-        });
-
-        ref.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    public void run() {
-                        llga.setText(logg);
-
-                    }
-                }).start();
-            }
-        });
+//        cnt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new Thread(new Runnable() {
+//                    public void run() {
+//
+//                        File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+//                        File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+//                        File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+//                        File locsv = locDst;
+//                        service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
+//
+//                    }
+//                }).start();
+//            }
+//        });
+//
+//        ref.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new Thread(new Runnable() {
+//                    public void run() {
+//                        llga.setText(logg);
+//
+//                    }
+//                }).start();
+//            }
+//        });
 
 
     }
@@ -272,6 +298,12 @@ public class MainActivity extends AppCompatActivity {
         // do check for AutoStart permission
         workManager.enqueueUniquePeriodicWork(UNIQUE_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request);
 
+    }
+
+    protected PendingIntent getPendingSelfIntent(Context context, String action) {
+        Intent intent = new Intent(context, getClass());
+        intent.setAction(action);
+        return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 
 }

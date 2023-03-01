@@ -55,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
 //        setTitle("Client");
-        Button cnt = findViewById(R.id.button);
-        Button ref = findViewById(R.id.button2);
-        TextView llga = findViewById(R.id.image_view);
+//        Button cnt = findViewById(R.id.button);
+//        Button ref = findViewById(R.id.button2);
+//        TextView llga = findViewById(R.id.image_view);
 //        llga.setMovementMethod(new ScrollingMovementMethod());
 
         MainActivity.context = getApplicationContext();

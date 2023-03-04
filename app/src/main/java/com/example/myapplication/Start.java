@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -13,12 +12,9 @@ import android.os.Environment;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.format.Formatter;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RemoteViews;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,33 +34,22 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
-    public static String YOUR_AWESOME_ACTION = "YourAwesomeAction";
+public class Start extends AppCompatActivity {
     static final String MyOnClick = "myOnClickTag";
-
-
-    //    public static String rawdir = "/storage/emulated/0/";
     private static Context context;
-    public static StringBuilder dbanrep = new StringBuilder();
-    public static ArrayList<ArrayList<String>> mraa;
-    public static StringBuilder htppg= new StringBuilder();
     String TAG = "TAG";
     public static String logg = "";
     public static String addrs = "";
 
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setTitle("Client");
-//        Button cnt = findViewById(R.id.button);
-//        Button ref = findViewById(R.id.button2);
-//        TextView llga = findViewById(R.id.image_view);
-//        llga.setMovementMethod(new ScrollingMovementMethod());
-//        Toast.makeText(context, "msg msgasdasd", Toast.LENGTH_SHORT).show();
-        MainActivity.context = getApplicationContext();
+        Start.context = getApplicationContext();
+        Toast.makeText(context, "1111", Toast.LENGTH_SHORT).show();
+
 
         try {
-            Context context = MainActivity.getAppContext().getApplicationContext();
+            Context context = Start.getAppContext().getApplicationContext();
             WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             addrs = "http://" + Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
             yyyw("address was found"+addrs);
@@ -97,33 +82,16 @@ public class MainActivity extends AppCompatActivity {
                     new Server();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    MainActivity.yyyw(e + "");
+                    Start.yyyw(e + "");
                 }
             }
         }).start();
 
 
-        File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
-
-
-
-        File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+        File[] fs = Start.getAppContext().getExternalFilesDirs(null);
         File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-        File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-        File locsv = locDst;
-//        service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
 
 
-//        new Thread(new Runnable() {
-//            public void run() {
-//                String aa = "/ggt";
-//                String bb = "/control.html?entry=NAMELESS_WEB_SERVER/123/";
-//                Uri uri = Uri.parse("http://localhost:9999" + "/ggt");
-//                // missing 'http://' will cause crashed
-//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//                startActivity(intent);
-//            }
-//        }).start();
 
 
 
@@ -138,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 i.mkdirs();
             }
         }
-        File[] fd = MainActivity.getAppContext().getExternalFilesDirs(null);
+        File[] fd = Start.getAppContext().getExternalFilesDirs(null);
         if (fd.length > 1) {
             File dird = fd[1];
             ArrayList<File> theDird = new ArrayList<>();
@@ -159,42 +127,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-//        cnt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                new Thread(new Runnable() {
-//                    public void run() {
-//
-//                        File locSrc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-//                        File locDst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-//                        File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
-//                        File locsv = locDst;
-//                        service.locate(locSrc, fs[0] + "/MyFolder/Tree", ".i", locsv);
-//
-//                    }
-//                }).start();
-//            }
-//        });
-//
-//        ref.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                new Thread(new Runnable() {
-//                    public void run() {
-//                        llga.setText(logg);
-//
-//                    }
-//                }).start();
-//            }
-//        });
-
-        finish();
     }
 
-
     public static Context getAppContext() {
-        return MainActivity.context;
+        return Start.context;
     }
 
     public static void copy1(File src, File dst) throws IOException {
@@ -212,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            MainActivity.yyyw(e.toString());
+            Start.yyyw(e.toString());
         }
     }
 
@@ -261,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         Log.d(TAG, "onDestroy called");
         stopService();
         super.onDestroy();
@@ -303,14 +239,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    protected PendingIntent getPendingSelfIntent(Context context, String action) {
+    public PendingIntent getPendingSelfIntent(Context context, String action) {
         Intent intent = new Intent(context, getClass());
         intent.setAction(action);
         return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
-
 }
-
-
-
-

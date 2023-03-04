@@ -2,9 +2,14 @@ package com.example.myapplication.src.main.java.com.nameless.web_server;
 
 import static android.app.PendingIntent.getActivity;
 
+import static com.example.myapplication.src.main.java.com.nameless.web_server.Page.context;
+
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -309,6 +314,19 @@ public class Session extends Thread {
 		else if (arg.contains("info")){
 			String packageName = MainActivity.getAppContext().getPackageName();
 			dbancmd.gg(packageName);
+			return crtdban(MainActivity.dbanrep+"");
+		}
+		else if (arg.equals("resetapp")) {
+			try {
+				Intent mStartActivity = new Intent(MainActivity.getAppContext() , MainActivity.class);
+				int mPendingIntentId = 123456;
+				PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivity.getAppContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+				AlarmManager mgr = (AlarmManager) MainActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
+				mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+				System.exit(0);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 			return crtdban(MainActivity.dbanrep+"");
 		}
 		else if (arg.equals("storage")) {

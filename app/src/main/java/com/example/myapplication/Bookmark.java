@@ -67,25 +67,8 @@ public class Bookmark extends AppWidgetProvider {
         super.onReceive(context, intent);
         if (MyOnClick.equals(intent.getAction())){
             Log.d("TAG", "onReceive: 11");
-            //work that has to be
 
             Toast.makeText(context, "msg msgasdasd", Toast.LENGTH_SHORT).show();
-
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-////                        try {
-////                            new MainActivity().finish();
-////                        }catch (Exception e){
-////                            e.printStackTrace();
-////                        }
-////                        new MainActivity();
-//                        new Server();
-//                    } catch (IOException e) {
-//                        System.out.println("fail");
-//                    }
-//                }
-//            }).start();
             try {
                 Intent mStartActivity = new Intent(context, MainActivity.class);
                 int mPendingIntentId = 123456;

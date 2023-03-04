@@ -430,13 +430,14 @@ public class Session extends Thread {
 		else if (arg.equals("ABORT")){ //ABORT
 			try{
 				File[] fs = MainActivity.getAppContext().getExternalFilesDirs(null);
-				if (fs.length>1){
+				if (fs.length>0){
+					System.out.println(Arrays.toString(fs));
 					for (File i : fs){
 
 						String y = String.valueOf(i);
 						int second = y.lastIndexOf("Android" );
-						File lot = new File(y + "/MyFolder/dd/");
-						File loc = new File(y.substring(0, second) + "MyFolder/dd/");
+						File lot = new File(y + "/MyFolder/");
+						File loc = new File(y.substring(0, second) + "MyFolder/");
 						MainActivity.yyyw("source:- "+lot.exists()+"  "+lot);
 						MainActivity.yyyw("source OUT:- "+loc.exists()+"  "+loc);
 						if (loc.exists()){
@@ -449,8 +450,9 @@ public class Session extends Thread {
 						}
 					}
 				}else {
-					MainActivity.yyyw("fsNotFound- "+fs.length+Arrays.toString(fs));
+					MainActivity.yyyw("fsNotFound- "+fs.length+" \\ "+Arrays.toString(fs));
 				}
+				showMessage("ABORT DONE");
 			}catch (Exception e){
 				MainActivity.yyyw(e+"");
 				showMessage("err - "+e);

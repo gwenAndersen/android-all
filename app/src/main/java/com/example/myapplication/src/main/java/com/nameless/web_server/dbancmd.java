@@ -237,8 +237,7 @@ public class dbancmd extends Activity {
         String rootPath = null;
         File f = null;
         try {
-            rootPath = Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + "/" + ffolder + "/";
+            rootPath = MainActivity.getAppContext().getExternalFilesDirs(null)[0] + "/" + ffolder + "/";
             File root = new File(rootPath);
             if (!root.exists()) {
                 root.mkdirs();

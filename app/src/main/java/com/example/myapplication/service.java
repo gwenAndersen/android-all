@@ -42,7 +42,7 @@ public class service {
     public static String replyyy;
     static ArrayList<String> largefile = new ArrayList<>();
     static int rtrn;
-    static File svlc = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+    static File svlc = MainActivity.getAppContext().getExternalFilesDirs(null)[0];
     File zppng = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
     File curf;
     File tmp;

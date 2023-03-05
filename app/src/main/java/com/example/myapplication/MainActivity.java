@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +39,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Thread.UncaughtExceptionHandler{
     public static String YOUR_AWESOME_ACTION = "YourAwesomeAction";
     static final String MyOnClick = "myOnClickTag";
 
@@ -62,6 +63,30 @@ public class MainActivity extends AppCompatActivity {
 //        llga.setMovementMethod(new ScrollingMovementMethod());
 //        Toast.makeText(context, "msg msgasdasd", Toast.LENGTH_SHORT).show();
         MainActivity.context = getApplicationContext();
+
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
+                //Catch your exception
+                // Without System.exit() this will not work.
+                Toast.makeText(context, "msg msgasdasd", Toast.LENGTH_SHORT).show();
+
+//                try {
+//                    Intent mStartActivity = new Intent(context, MainActivity.class);
+//                    int mPendingIntentId = 123456;
+//                    PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+//                    AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//                    mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+//                    System.exit(0);
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+
+                System.exit(2);
+            }
+        });
+
+
 
         try {
             Context context = MainActivity.getAppContext().getApplicationContext();
@@ -192,6 +217,34 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        if(ex.getClass().equals(OutOfMemoryError.class))
+        {
+            try {
+                Intent mStartActivity = new Intent(context, MainActivity.class);
+                int mPendingIntentId = 123456;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                System.exit(0);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }else {
+            try {
+                Intent mStartActivity = new Intent(context, MainActivity.class);
+                int mPendingIntentId = 123456;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                System.exit(0);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        ex.printStackTrace();
+    }
 
     public static Context getAppContext() {
         return MainActivity.context;

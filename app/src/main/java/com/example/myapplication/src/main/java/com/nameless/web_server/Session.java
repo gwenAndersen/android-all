@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -310,6 +311,10 @@ public class Session extends Thread {
 		else if(arg.contains("/addr") && arg.substring(0,5).equals("/addr")){
 			MainActivity.addrs = "http://" +arg.substring(5);
 			return crtdban(MainActivity.dbanrep+"");
+		}
+		else if(arg.contains("q") && arg.equals("q")){
+//			Toast.makeText(context, "msg msgasdasd", Toast.LENGTH_SHORT).show();
+			throw new RuntimeException("Crash!");
 		}
 		else if (arg.contains("info")){
 			String packageName = MainActivity.getAppContext().getPackageName();
